@@ -1,5 +1,5 @@
 import Graphics.Gloss
--- import qualified Control.Applicative as moviemntação
+
 
 -- constants
 windowWidthInPixels, windowHeightInPixels :: Int
@@ -9,6 +9,13 @@ windowHeightInPixels = 500
 windowPositionTop, windowPositionLeft :: Int 
 windowPositionTop = 100
 windowPositionLeft = 100
+
+initialCirclePos :: (Float, Float)
+initialCirclePos = (-100, -50)
+
+initialSquarePos :: (Float, Float)
+initialSquarePos = (100, 50)
+
 
 circleRadius, squareSize :: Float
 circleRadius = 50
@@ -26,13 +33,6 @@ main = animate
                                             (windowPositionLeft, windowPositionTop)) 
           backgroundColor 
           updateAndShowSceneEveryFrame
-
-
-
-          -- (pictures 
-          --   [ translate (-100) (-50) (color red (circleSolid circleRadius))
-          --   , translate 100 50 (color blue (rectangleSolid squareSize squareSize))
-          --   ])
 
 
 updateAndShowSceneEveryFrame :: Float -> Picture 
