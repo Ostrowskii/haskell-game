@@ -55,7 +55,7 @@ common warnings
 
 library
   hs-source-dirs:      src
-  exposed-modules:     World, Map, Block.RedBlock, Block.BlueBlock, Block.Blocks
+  exposed-modules:     World, Map, Moviment, Block.RedBlock, Block.BlueBlock, Block.Blocks
   build-depends:       base >=4.7 && <5, gloss
   default-language:    Haskell2010
 
