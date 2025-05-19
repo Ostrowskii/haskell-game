@@ -53,6 +53,12 @@ extra-doc-files:    CHANGELOG.md
 common warnings
     ghc-options: -Wall
 
+library
+  hs-source-dirs:      src
+  exposed-modules:     World, Map, Block.RedBlock, Block.BlueBlock, Block.Blocks
+  build-depends:       base >=4.7 && <5, gloss
+  default-language:    Haskell2010
+
 executable haskell-game
     -- Import common warning flags.
     import:           warnings
@@ -68,7 +74,8 @@ executable haskell-game
 
     -- Other library packages from which modules are imported.
     build-depends:    base ^>=4.17.2.1, 
-                    gloss
+                    gloss,
+                    haskell-game
     -- Directories containing source files.
     hs-source-dirs:   app
 

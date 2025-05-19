@@ -30,6 +30,16 @@
   (major1) == 1 && (major2) <  13 || \
   (major1) == 1 && (major2) == 13 && (minor) <= 2)
 #endif /* MIN_VERSION_gloss */
+/* package haskell-game-0.1.0.0 */
+#ifndef VERSION_haskell_game
+#define VERSION_haskell_game "0.1.0.0"
+#endif /* VERSION_haskell_game */
+#ifndef MIN_VERSION_haskell_game
+#define MIN_VERSION_haskell_game(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  1 || \
+  (major1) == 0 && (major2) == 1 && (minor) <= 0)
+#endif /* MIN_VERSION_haskell_game */
 
 /* tool gcc-11 */
 #ifndef TOOL_VERSION_gcc
