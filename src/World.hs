@@ -39,10 +39,6 @@ module World (startGame) where
     handleInput :: Event -> World -> World 
     handleInput   event world = (handleMoviment event world)
 
-
-
-
-
     startGame :: IO()
     startGame = play 
                 (InWindow "Lucy testando Gloss!" 
@@ -54,17 +50,3 @@ module World (startGame) where
                 drawWorld
                 handleInput
                 updateWorld
-
-
--- main :: IO ()
--- main = play
---          (InWindow "Lucy testando Gloss!" (windowWidthInPixels, windowHeightInPixels) (windowPositionTop, windowPositionLeft))
---          backgroundColor
---          60 -- FPS
---          initialCirclePos -- estado inicial do mundo
---          drawWorld
---          handleInput --lidar com inputs de teclado etc
---          updateWorld
-
-
-
