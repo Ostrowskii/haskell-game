@@ -4,8 +4,8 @@ module World (startGame) where
     import Graphics.Gloss.Interface.Pure.Game
     import Map (drawMap)
     import Moviment (handleMoviment, updateWorld)
+    import Types (WorldData(..))
 
-    type World = (Float, Float)
 
     windowWidthInPixels, windowHeightInPixels :: Int
     windowWidthInPixels = 500
@@ -21,22 +21,28 @@ module World (startGame) where
     backgroundColor :: Color
     backgroundColor = white
 
+
     -- player initial pos included
-    initialState :: World
-    initialState = (0,0) 
+    initialState :: WorldData
+    initialState = WorldData
+        {
+        timer = 0,
+        playerPosition = (0,0) ,
+        motionPerFrame = (0,0)
+        }
 
     drawPlayer :: (Float, Float)  ->  Picture
     drawPlayer (x,y)  = translate x y (color green (circleSolid 30))
 
-    drawWorld :: World -> Picture  
-    drawWorld playerPos = pictures 
+    drawWorld :: WorldData -> Picture  
+    drawWorld world = pictures 
         [
             drawMap, 
-            drawPlayer playerPos
+            drawPlayer (playerPosition world)
         ]
 
 
-    handleInput :: Event -> World -> World 
+    handleInput :: Event -> WorldData -> WorldData 
     handleInput   event world = (handleMoviment event world)
 
     startGame :: IO()
