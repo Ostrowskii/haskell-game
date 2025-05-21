@@ -3,7 +3,7 @@ module World (startGame) where
     import Graphics.Gloss
     import Graphics.Gloss.Interface.Pure.Game
     import Map (drawMap)
-    import Moviment (handleMoviment, updateWorld)
+    import Moviment (handleInputMoviment, updateWorld)
     import Types (WorldData(..))
 
 
@@ -43,7 +43,7 @@ module World (startGame) where
 
 
     handleInput :: Event -> WorldData -> WorldData 
-    handleInput   event world = (handleMoviment event world)
+    handleInput   event world = (handleInputMoviment event world)
 
     startGame :: IO()
     startGame = play 

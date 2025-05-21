@@ -1,5 +1,15 @@
 module Block.Blocks (blockSize) where
 
     blockSize :: Float
-    blockSize = 50
+    blockSize = 32
+
+
+
+
+
+
+
+
+
+
 
