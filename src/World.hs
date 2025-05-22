@@ -6,7 +6,6 @@ module World (startGame) where
     import Moviment (handleInputMoviment, updateWorld)
     import Types (WorldData(..))
 
-
     windowWidthInPixels, windowHeightInPixels :: Int
     windowWidthInPixels = 500
     windowHeightInPixels = 500
@@ -32,7 +31,7 @@ module World (startGame) where
         }
 
     drawPlayer :: (Float, Float)  ->  Picture
-    drawPlayer (x,y)  = translate x y (color green (circleSolid 30))
+    drawPlayer (x,y)  = translate x y (color green (circleSolid 16))
 
     drawWorld :: WorldData -> Picture  
     drawWorld world = pictures 

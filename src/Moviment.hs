@@ -25,6 +25,7 @@ module Moviment (handleInputMoviment, updateWorld) where
 
         --to do : before moving, check if the block has colision
 
+        
         let (x,y)       = playerPosition world 
             (dx, dy)    = motionPerFrame world
         in world { playerPosition = ( x + dx, y + dy)}
