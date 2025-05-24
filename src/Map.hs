@@ -21,10 +21,12 @@ module Map (drawMap) where
         , [1,1,1,1,1,1,1]
         ]
 
-    tileToBlock :: Int -> (Float, Float)  -> Picture
-    tileToBlock 1 = redBlockAt
-    tileToBlock 2 = blueBlockAt
-    tileToBlock _ = \_ -> blank
+    -- essa funçao é amazing. ela ta pedindo um int que a gente usa nessa propria função, mas tbm
+    -- pede um (Float, Float)  que usa dentro da função que ta no retorno... tipo?? como assim??
+    tileToBlock ::  Int     -> (Float, Float)  -> Picture
+    tileToBlock     1       = redBlockAt
+    tileToBlock     2       = blueBlockAt
+    tileToBlock     _       = \_ -> blank
 
     pixelPositionToTilePosition :: Float -> Float
     pixelPositionToTilePosition pixel = pixel / fromIntegral tileSizeInPixel
