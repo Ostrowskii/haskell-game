@@ -3,8 +3,8 @@ module Moviment (handleInputMoviment, updateWorld) where
     import Graphics.Gloss
     import Graphics.Gloss.Interface.Pure.Game
     import Types (WorldData(..), Direction(..))
-    -- import Block.Blocks (idBlocksWithColition)
-    import Map (pixelPositionToBlockId)
+    import Block.Blocks (idBlocksWithColition)
+    import Map (pixelPositionToBlockId, isBlockSolidAt)
 
     playerSpeedStraight :: Float
     playerSpeedStraight = 3
@@ -40,39 +40,25 @@ module Moviment (handleInputMoviment, updateWorld) where
             isDiagonal  = (x /= 0) && (y /= 0)
         in
             if isDiagonal then ( x *  playerDiagonalSpeed, y * playerDiagonalSpeed) else (x * playerSpeedStraight, y * playerSpeedStraight)
---int ou float?                              dx ou xy  e id
-    -- getBlockIdNearPlayerOnX :: WorldData  -> (Float, Float)     -> Int
-    -- getBlockIdNearPlayerOnX    world        (futureX, y)        = pixelPositionToBlockId (futureX, y)
-
-    -- getBlockIdNearPlayerOnY :: WorldData  -> (Float, Float)     -> Int
-    -- getBlockIdNearPlayerOnY    world        (x, futureY)        = pixelPositionToBlockId (x, futureY)
 
 
-    idBlocksWithColition :: [Int]
-    idBlocksWithColition =
-        [
-            1
-
-        ]
-
-    canPlayerMove ::   Int         -> Bool
-    canPlayerMove      idBlock      = idBlock `elem` idBlocksWithColition
 
 
     updateWorld :: Float -> WorldData -> WorldData
     updateWorld     _       world      =
-
-        --to do : before moving, check if the block has colision
-        -- then if it has calculate how to move (to prevent extra calculations unecessary)
-
         let (x,y)                               = playerPosition        world
             (dx, dy)                            = calculateMoviment     world
             --future x and y
             (fx, fy)                            = (x + dx, y + dy)
-            blockIdNearPlayerOnX      = if dx /= 0 then pixelPositionToBlockId (fx, y) else 0
-            blockIdNearPlayerOnY      = if dy /= 0 then pixelPositionToBlockId (x, fy) else 0
-            canPlayerMoveX = canPlayerMove blockIdNearPlayerOnX
-            canPlayerMoveY = canPlayerMove blockIdNearPlayerOnY
+            -- blockIdNearPlayerOnX      = if dx /= 0 then pixelPositionToBlockId (fx, y) else 0
+            -- blockIdNearPlayerOnY      = if dy /= 0 then pixelPositionToBlockId (x, fy) else 0
+            -- canPlayerMoveX = not (isBlockSolid blockIdNearPlayerOnX)
+            -- canPlayerMoveY = not (isBlockSolid blockIdNearPlayerOnY)
+            canPlayerMoveX      = if dx /= 0 then not (isBlockSolidAt (fx, y)) else False
+            --            se estiver em movimento então verifique se o bloco tem colisão se não estiver em movimento, não faça calculos
+            canPlayerMoveY      = if dy /= 0 then not (isBlockSolidAt (x, fy)) else False
+            -- canPlayerMoveX = not (isBlockSolidAt blockIdNearPlayerOnX)
+            -- canPlayerMoveY = not (isBlockSolidAt blockIdNearPlayerOnY)
 
             actualMoviment  =   (if  canPlayerMoveX then fx else x, if canPlayerMoveY then fy else y)
         in world { playerPosition = actualMoviment}

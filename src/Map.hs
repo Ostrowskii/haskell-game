@@ -1,9 +1,9 @@
-module Map (drawMap, pixelPositionToBlockId) where
+module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
     import Graphics.Gloss
     import Block.RedBlock
     import Block.BlueBlock
-
+    import Block.Blocks (idBlocksWithColition)
     tileSizeInPixel :: Int 
     tileSizeInPixel = 32
 
@@ -30,9 +30,6 @@ module Map (drawMap, pixelPositionToBlockId) where
     tileToBlock     _       = \_ -> blank
 
 
-    
-
-
     tilePositionToPixelPosition :: Float -> Float
     tilePositionToPixelPosition tile = tile * fromIntegral tileSizeInPixel
 
@@ -40,20 +37,53 @@ module Map (drawMap, pixelPositionToBlockId) where
     pixelPositionToTilePosition pixel = pixel / fromIntegral tileSizeInPixel
 
 --rever essa funçao
+    -- pixelPositionToBlockId :: (Float, Float) -> Int
+    -- pixelPositionToBlockId (x, y) =
+    --     let
+    --         xInLevel = floor (pixelPositionToTilePosition x)
+    --         yInLevel = floor (pixelPositionToTilePosition y)
+    --         safeIndex i maxI = max 0 (min i (maxI - 1))  -- clamp
+    --         maxRow = length level
+    --         maxCol = length (head level)
+    --         ySafe = safeIndex yInLevel maxRow
+    --         xSafe = safeIndex xInLevel maxCol
+    --     in
+    --         (level !! ySafe) !! xSafe
+
+         
+    isBlockSolidAt ::   (Float, Float)          -> Bool
+    isBlockSolidAt      (x,y) = 
+        let         idBlock = pixelPositionToBlockId (x, y)
+                    idBlock2 = pixelPositionToBlockId (x+32, y)
+                    idBlock3 = pixelPositionToBlockId (x, y-32)
+                    idBlock4 = pixelPositionToBlockId (x+32, y-32)
+                    
+        in          idBlock `elem` idBlocksWithColition || idBlock2 `elem` idBlocksWithColition || idBlock3 `elem` idBlocksWithColition || idBlock4 `elem` idBlocksWithColition
+
+   
     pixelPositionToBlockId :: (Float, Float) -> Int
     pixelPositionToBlockId (x, y) =
         let
-            xInLevel = floor (pixelPositionToTilePosition x)
-            yInLevel = floor (pixelPositionToTilePosition y)
-            safeIndex i maxI = max 0 (min i (maxI - 1))  -- clamp
+            numRows = length level
+            numCols = length (head level)
+            xOffset = tilePositionToPixelPosition (fromIntegral numCols) / 2
+            yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
+
+            -- Corrigindo a posição para o sistema de coordenadas da matriz
+            adjustedX = x + xOffset
+            adjustedY = -y + yOffset
+
+            -- Convertendo de coordenadas em pixels para posição na grade
+            xInLevel = floor (pixelPositionToTilePosition adjustedX)
+            yInLevel = floor (pixelPositionToTilePosition adjustedY)
+
+            safeIndex i maxI = max 0 (min i (maxI - 1))  -- evita índice fora do array
             maxRow = length level
             maxCol = length (head level)
             ySafe = safeIndex yInLevel maxRow
             xSafe = safeIndex xInLevel maxCol
         in
             (level !! ySafe) !! xSafe
-            
-
 
     -- to do estudar essa parte novamente no futuro
     drawMap :: Picture
