@@ -40,19 +40,12 @@ module Moviment (handleInputMoviment, updateWorld) where
             isDiagonal  = (x /= 0) && (y /= 0)
         in
             if isDiagonal then ( x *  playerDiagonalSpeed, y * playerDiagonalSpeed) else (x * playerSpeedStraight, y * playerSpeedStraight)
+--int ou float?                              dx ou xy  e id
+    -- getBlockIdNearPlayerOnX :: WorldData  -> (Float, Float)     -> Int
+    -- getBlockIdNearPlayerOnX    world        (futureX, y)        = pixelPositionToBlockId (futureX, y)
 
-    calculateBlockNextToPlayerId :: WorldData  -> (Int,Int)
-    calculateBlockNextToPlayerId    world       =
-        let
-            
-            (x, y)                  = playerPosition world
-            (dx, dy)                = calculateMoviment world
-            (futureX,futureY)       = (x + dx, y + dy)
-            --to do: make moviment better by cutting calculation if the player didnt move that axis
-            blockXAxis              = pixelPositionToBlockId (futureX, y)
-            blockYAxis              = pixelPositionToBlockId (x, futureX)
-
-        in   (blockXAxis, blockYAxis)
+    -- getBlockIdNearPlayerOnY :: WorldData  -> (Float, Float)     -> Int
+    -- getBlockIdNearPlayerOnY    world        (x, futureY)        = pixelPositionToBlockId (x, futureY)
 
 
     idBlocksWithColition :: [Int]
@@ -62,12 +55,8 @@ module Moviment (handleInputMoviment, updateWorld) where
 
         ]
 
-    canPlayerMove :: WorldData -> (Bool, Bool)
-    canPlayerMove   world               =
-        let     (idBlockX, idBlockY)    =   calculateBlockNextToPlayerId world
-                isXBlockWalkable        =   idBlockX `elem` idBlocksWithColition
-                isYBlockWalkable        =   idBlockY `elem` idBlocksWithColition
-        in (isXBlockWalkable, isYBlockWalkable)
+    canPlayerMove ::   Int         -> Bool
+    canPlayerMove      idBlock      = idBlock `elem` idBlocksWithColition
 
 
     updateWorld :: Float -> WorldData -> WorldData
@@ -78,6 +67,12 @@ module Moviment (handleInputMoviment, updateWorld) where
 
         let (x,y)                               = playerPosition        world
             (dx, dy)                            = calculateMoviment     world
-            (canPlayerMoveX, canPlayerMoveY)    = canPlayerMove world
-            actualMoviment  =   (if  canPlayerMoveX then x + dx else x, if canPlayerMoveY then y + dy else y)
+            --future x and y
+            (fx, fy)                            = (x + dx, y + dy)
+            blockIdNearPlayerOnX      = if dx /= 0 then pixelPositionToBlockId (fx, y) else 0
+            blockIdNearPlayerOnY      = if dy /= 0 then pixelPositionToBlockId (x, fy) else 0
+            canPlayerMoveX = canPlayerMove blockIdNearPlayerOnX
+            canPlayerMoveY = canPlayerMove blockIdNearPlayerOnY
+
+            actualMoviment  =   (if  canPlayerMoveX then fx else x, if canPlayerMoveY then fy else y)
         in world { playerPosition = actualMoviment}
