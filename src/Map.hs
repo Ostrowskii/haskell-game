@@ -1,4 +1,4 @@
-module Map (drawMap) where
+module Map (drawMap, pixelPositionToBlockId) where
 
     import Graphics.Gloss
     import Block.RedBlock
@@ -10,12 +10,13 @@ module Map (drawMap) where
     type Tile = Int
     type TileMap = [[Tile]]
 
+    --all tiles position in one place
     level :: TileMap 
     level =
         [ [1,1,1,1,1,1,1]
+        , [1,0,0,0,0,2,1]
         , [1,0,0,0,0,0,1]
         , [1,0,0,0,0,0,1]
-        , [1,0,0,2,0,0,1]
         , [1,0,0,0,0,0,1]
         , [1,0,0,0,0,0,1]
         , [1,1,1,1,1,1,1]
@@ -28,11 +29,31 @@ module Map (drawMap) where
     tileToBlock     2       = blueBlockAt
     tileToBlock     _       = \_ -> blank
 
-    pixelPositionToTilePosition :: Float -> Float
-    pixelPositionToTilePosition pixel = pixel / fromIntegral tileSizeInPixel
+
+    
+
 
     tilePositionToPixelPosition :: Float -> Float
     tilePositionToPixelPosition tile = tile * fromIntegral tileSizeInPixel
+
+    pixelPositionToTilePosition :: Float -> Float
+    pixelPositionToTilePosition pixel = pixel / fromIntegral tileSizeInPixel
+
+--rever essa funçao
+    pixelPositionToBlockId :: (Float, Float) -> Int
+    pixelPositionToBlockId (x, y) =
+        let
+            xInLevel = floor (pixelPositionToTilePosition x)
+            yInLevel = floor (pixelPositionToTilePosition y)
+            safeIndex i maxI = max 0 (min i (maxI - 1))  -- clamp
+            maxRow = length level
+            maxCol = length (head level)
+            ySafe = safeIndex yInLevel maxRow
+            xSafe = safeIndex xInLevel maxCol
+        in
+            (level !! ySafe) !! xSafe
+            
+
 
     -- to do estudar essa parte novamente no futuro
     drawMap :: Picture
