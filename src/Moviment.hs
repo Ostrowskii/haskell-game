@@ -46,19 +46,16 @@ module Moviment (handleInputMoviment, updateWorld) where
 
     updateWorld :: Float -> WorldData -> WorldData
     updateWorld     _       world      =
-        let (x,y)                               = playerPosition        world
-            (dx, dy)                            = calculateMoviment     world
-            --future x and y
-            (fx, fy)                            = (x + dx, y + dy)
-            -- blockIdNearPlayerOnX      = if dx /= 0 then pixelPositionToBlockId (fx, y) else 0
-            -- blockIdNearPlayerOnY      = if dy /= 0 then pixelPositionToBlockId (x, fy) else 0
-            -- canPlayerMoveX = not (isBlockSolid blockIdNearPlayerOnX)
-            -- canPlayerMoveY = not (isBlockSolid blockIdNearPlayerOnY)
-            canPlayerMoveX      = if dx /= 0 then not (isBlockSolidAt (fx, y)) else False
-            --            se estiver em movimento então verifique se o bloco tem colisão se não estiver em movimento, não faça calculos
-            canPlayerMoveY      = if dy /= 0 then not (isBlockSolidAt (x, fy)) else False
-            -- canPlayerMoveX = not (isBlockSolidAt blockIdNearPlayerOnX)
-            -- canPlayerMoveY = not (isBlockSolidAt blockIdNearPlayerOnY)
+        let (x, y)                = playerPosition        world
+            (moviemntOnX, moviemntOnY)                            = calculateMoviment     world
+            (futurePositionX, futurePositionY)                    = (x + moviemntOnX, y + moviemntOnY)
 
-            actualMoviment  =   (if  canPlayerMoveX then fx else x, if canPlayerMoveY then fy else y)
+            futureBlockOnX = (futurePositionX, y)
+            futureBlockOnY = (x, futurePositionY)
+
+            --            se estiver em movimento então verifique se o bloco tem colisão se não estiver em movimento, não faça calculos
+            canPlayerMoveX      = ((moviemntOnX /= 0) && not (isBlockSolidAt futureBlockOnX ))
+            canPlayerMoveY      = ((moviemntOnY /= 0) && not (isBlockSolidAt futureBlockOnY ))
+            
+            actualMoviment  =   (if  canPlayerMoveX then futurePositionX else x, if canPlayerMoveY then futurePositionY else y)
         in world { playerPosition = actualMoviment}

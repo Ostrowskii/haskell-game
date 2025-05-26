@@ -10,7 +10,6 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
     type Tile = Int
     type TileMap = [[Tile]]
 
-    --all tiles position in one place
     level :: TileMap 
     level =
         [ [1,1,1,1,1,1,1]
@@ -22,8 +21,6 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
         , [1,1,1,1,1,1,1]
         ]
 
-    -- essa funçao é amazing. ela ta pedindo um int que a gente usa nessa propria função, mas tbm
-    -- pede um (Float, Float)  que usa dentro da função que ta no retorno... tipo?? como assim??
     tileToBlock ::  Int     -> (Float, Float)  -> Picture
     tileToBlock     1       = redBlockAt
     tileToBlock     2       = blueBlockAt
@@ -35,21 +32,6 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
     pixelPositionToTilePosition :: Float -> Float
     pixelPositionToTilePosition pixel = pixel / fromIntegral tileSizeInPixel
-
---rever essa funçao
-    -- pixelPositionToBlockId :: (Float, Float) -> Int
-    -- pixelPositionToBlockId (x, y) =
-    --     let
-    --         xInLevel = floor (pixelPositionToTilePosition x)
-    --         yInLevel = floor (pixelPositionToTilePosition y)
-    --         safeIndex i maxI = max 0 (min i (maxI - 1))  -- clamp
-    --         maxRow = length level
-    --         maxCol = length (head level)
-    --         ySafe = safeIndex yInLevel maxRow
-    --         xSafe = safeIndex xInLevel maxCol
-    --     in
-    --         (level !! ySafe) !! xSafe
-
          
     isBlockSolidAt ::   (Float, Float)          -> Bool
     isBlockSolidAt      (x,y) = 
@@ -61,6 +43,7 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
         in          idBlock `elem` idBlocksWithColition || idBlock2 `elem` idBlocksWithColition || idBlock3 `elem` idBlocksWithColition || idBlock4 `elem` idBlocksWithColition
 
    
+    -- to do: review this code
     pixelPositionToBlockId :: (Float, Float) -> Int
     pixelPositionToBlockId (x, y) =
         let
@@ -69,15 +52,13 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
             xOffset = tilePositionToPixelPosition (fromIntegral numCols) / 2
             yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
 
-            -- Corrigindo a posição para o sistema de coordenadas da matriz
             adjustedX = x + xOffset
             adjustedY = -y + yOffset
 
-            -- Convertendo de coordenadas em pixels para posição na grade
             xInLevel = floor (pixelPositionToTilePosition adjustedX)
             yInLevel = floor (pixelPositionToTilePosition adjustedY)
 
-            safeIndex i maxI = max 0 (min i (maxI - 1))  -- evita índice fora do array
+            safeIndex i maxI = max 0 (min i (maxI - 1)) 
             maxRow = length level
             maxCol = length (head level)
             ySafe = safeIndex yInLevel maxRow
@@ -85,7 +66,7 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
         in
             (level !! ySafe) !! xSafe
 
-    -- to do estudar essa parte novamente no futuro
+    -- to do review this code
     drawMap :: Picture
     drawMap = pictures
             [ tileToBlock tile (x, y)
