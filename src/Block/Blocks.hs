@@ -7,8 +7,8 @@ module Block.Blocks (blockSize, idBlocksWithColition) where
     idBlocksWithColition :: [Int]
     idBlocksWithColition =
         [
-            2
-            
+            2, 1
+        --  0   
         ]
     
 
