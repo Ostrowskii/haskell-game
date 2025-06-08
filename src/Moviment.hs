@@ -16,6 +16,9 @@ module Moviment (handleInputMoviment, updateWorld) where
     -- if 3 diagonal speed = 2.12132
     playerDiagonalSpeed = 2.12132
 
+    spaceBetweenWallAndPlayer :: Float 
+    spaceBetweenWallAndPlayer = 0.001
+
     handleInputMoviment :: Event -> WorldData -> WorldData
     handleInputMoviment (EventKey (Char 'w') Down _ _)  world  =  world { isWPressed = True, playerLastDirection = DirectionUp }
     handleInputMoviment (EventKey (Char 'w') Up _ _)    world  =  world { isWPressed = False}
@@ -45,7 +48,7 @@ module Moviment (handleInputMoviment, updateWorld) where
 
 
     calculoArredondamento :: Float -> Float
-    calculoArredondamento x =  if (x `mod'` 32) > -0.1 then (x `mod'` 32) -0.1 else (x `mod'` 32)
+    calculoArredondamento x =  if (x `mod'` 32) > -spaceBetweenWallAndPlayer then (x `mod'` 32) -spaceBetweenWallAndPlayer else (x `mod'` 32)
 
     -- calculoArredondamento :: Float -> Float
     -- calculoArredondamento    xPos   = resto xPos
@@ -70,17 +73,13 @@ module Moviment (handleInputMoviment, updateWorld) where
             xOnColision =  calculoArredondamento    x
             yOnColision =  calculoArredondamento    y
 
-            -- movimentWithColitionOnX1 = if   
-            --                             then (if  then movimentOnX else calculoArredondamento movimentOnX)
-            --                             else x
 
-            -- movimentWithColitionOnY1 = if yBlockHasColision && yOnColision >= 0.1 && yOnColision <= playerDiagonalSpeed  then y + (yOnColision* signum movimentOnY) else y
 
-            isMovimentDiagonalAndThereisSpaceOnX = movimentOnX ==  playerDiagonalSpeed && xOnColision >= playerDiagonalSpeed
-            isPlayerAlreadyByWallOnX = xBlockHasColision && xOnColision >= 0.1
+            isMovimentDiagonalAndThereisSpaceOnX = movimentOnX ==  playerDiagonalSpeed && xOnColision > playerDiagonalSpeed
+            isPlayerAlreadyByWallOnX = xBlockHasColision && xOnColision >= spaceBetweenWallAndPlayer
 
-            isMovimentDiagonalAndThereisSpaceOnY = movimentOnY ==  playerDiagonalSpeed && yOnColision >= playerDiagonalSpeed
-            isPlayerAlreadyByWallOnY = yBlockHasColision && yOnColision >= 0.1
+            isMovimentDiagonalAndThereisSpaceOnY = movimentOnY ==  playerDiagonalSpeed && yOnColision > playerDiagonalSpeed
+            isPlayerAlreadyByWallOnY = yBlockHasColision && yOnColision >= spaceBetweenWallAndPlayer
 
 
 

@@ -34,7 +34,7 @@ module World (startGame) where
         }
 
     drawPlayer :: (Float, Float)  ->  Picture
-    drawPlayer (x,y)  = translate x y (color green (circleSolid 16))
+    drawPlayer (x,y)  = translate x y (color green (rectangleSolid 32 32))
 
     drawWorld :: WorldData -> Picture
     drawWorld world = pictures

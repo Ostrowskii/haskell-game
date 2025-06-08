@@ -50,50 +50,13 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
 
     -- to do: review this code
-    pixelPositionToBlockId :: (Float, Float) -> Int
-    pixelPositionToBlockId (x, y) =
-        let
-            xInLevel = floor (pixelPositionToTilePosition x)
-            yInLevel = floor (pixelPositionToTilePosition (-y))  -- y invertido, pois o (0,0) está no topo
-
-            safeIndex i maxI = max 0 (min i (maxI - 1))
-            maxRow = length level
-            maxCol = length (head level)
-            ySafe = safeIndex yInLevel maxRow
-            xSafe = safeIndex xInLevel maxCol
-        in
-            (level !! ySafe) !! xSafe
-
-
-    -- to do review this code
-    drawMap :: Picture
-    drawMap = pictures
-            [ tileToBlock tile (x, y)
-            | (rowIndex, row) <- zip [0 ..] level
-            , (colIndex, tile) <- zip [0 ..] row
-            , let x = fromIntegral (colIndex * tileSizeInPixel)
-            , let y = fromIntegral (-(rowIndex * tileSizeInPixel))  -- y negativo para alinhar com o eixo gráfico
-            ]
-
-
-
-
-    -- to do: review this code
     -- pixelPositionToBlockId :: (Float, Float) -> Int
     -- pixelPositionToBlockId (x, y) =
     --     let
-    --         numRows = length level
-    --         numCols = length (head level)
-    --         xOffset = tilePositionToPixelPosition (fromIntegral numCols) / 2
-    --         yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
+    --         xInLevel = floor (pixelPositionToTilePosition x)
+    --         yInLevel = floor (pixelPositionToTilePosition (-y))  -- y invertido, pois o (0,0) está no topo
 
-    --         adjustedX = x + xOffset
-    --         adjustedY = -y + yOffset
-
-    --         xInLevel = floor (pixelPositionToTilePosition adjustedX)
-    --         yInLevel = floor (pixelPositionToTilePosition adjustedY)
-
-    --         safeIndex i maxI = max 0 (min i (maxI - 1)) 
+    --         safeIndex i maxI = max 0 (min i (maxI - 1))
     --         maxRow = length level
     --         maxCol = length (head level)
     --         ySafe = safeIndex yInLevel maxRow
@@ -101,21 +64,58 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
     --     in
     --         (level !! ySafe) !! xSafe
 
+
     -- -- to do review this code
     -- drawMap :: Picture
     -- drawMap = pictures
     --         [ tileToBlock tile (x, y)
-    --         -- (numero da linha, [literalmente a propria linha ]
     --         | (rowIndex, row) <- zip [0 ..] level
-    --         -- (numero da coluna, literalmente o valor do bloco) 
     --         , (colIndex, tile) <- zip [0 ..] row
-    --         , let x = fromIntegral (colIndex * tileSizeInPixel) - xOffset
-    --         , let y = fromIntegral (-(rowIndex * tileSizeInPixel)) + yOffset
+    --         , let x = fromIntegral (colIndex * tileSizeInPixel)
+    --         , let y = fromIntegral (-(rowIndex * tileSizeInPixel))  -- y negativo para alinhar com o eixo gráfico
     --         ]
-    --     where
-    --         numRows = length level
-    --         numCols = length (head level)
-    --         xOffset = tilePositionToPixelPosition (fromIntegral numCols)  / 2
-    --         yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
+
+
+
+
+    -- to do: review this code
+    pixelPositionToBlockId :: (Float, Float) -> Int
+    pixelPositionToBlockId (x, y) =
+        let
+            numRows = length level
+            numCols = length (head level)
+            xOffset = tilePositionToPixelPosition (fromIntegral numCols) / 2
+            yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
+
+            adjustedX = x + xOffset
+            adjustedY = -y + yOffset
+
+            xInLevel = floor (pixelPositionToTilePosition adjustedX)
+            yInLevel = floor (pixelPositionToTilePosition adjustedY)
+
+            safeIndex i maxI = max 0 (min i (maxI - 1)) 
+            maxRow = length level
+            maxCol = length (head level)
+            ySafe = safeIndex yInLevel maxRow
+            xSafe = safeIndex xInLevel maxCol
+        in
+            (level !! ySafe) !! xSafe
+
+    -- to do review this code
+    drawMap :: Picture
+    drawMap = pictures
+            [ tileToBlock tile (x, y)
+            -- (numero da linha, [literalmente a propria linha ]
+            | (rowIndex, row) <- zip [0 ..] level
+            -- (numero da coluna, literalmente o valor do bloco) 
+            , (colIndex, tile) <- zip [0 ..] row
+            , let x = fromIntegral (colIndex * tileSizeInPixel) - xOffset
+            , let y = fromIntegral (-(rowIndex * tileSizeInPixel)) + yOffset
+            ]
+        where
+            numRows = length level
+            numCols = length (head level)
+            xOffset = tilePositionToPixelPosition (fromIntegral numCols)  / 2
+            yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
 
 
