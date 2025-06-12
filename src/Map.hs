@@ -48,36 +48,6 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
         in          idBlock `elem` idBlocksWithColition || idBlock2 `elem` idBlocksWithColition || idBlock3 `elem` idBlocksWithColition || idBlock4 `elem` idBlocksWithColition
 
-
-    -- to do: review this code
-    -- pixelPositionToBlockId :: (Float, Float) -> Int
-    -- pixelPositionToBlockId (x, y) =
-    --     let
-    --         xInLevel = floor (pixelPositionToTilePosition x)
-    --         yInLevel = floor (pixelPositionToTilePosition (-y))  -- y invertido, pois o (0,0) está no topo
-
-    --         safeIndex i maxI = max 0 (min i (maxI - 1))
-    --         maxRow = length level
-    --         maxCol = length (head level)
-    --         ySafe = safeIndex yInLevel maxRow
-    --         xSafe = safeIndex xInLevel maxCol
-    --     in
-    --         (level !! ySafe) !! xSafe
-
-
-    -- -- to do review this code
-    -- drawMap :: Picture
-    -- drawMap = pictures
-    --         [ tileToBlock tile (x, y)
-    --         | (rowIndex, row) <- zip [0 ..] level
-    --         , (colIndex, tile) <- zip [0 ..] row
-    --         , let x = fromIntegral (colIndex * tileSizeInPixel)
-    --         , let y = fromIntegral (-(rowIndex * tileSizeInPixel))  -- y negativo para alinhar com o eixo gráfico
-    --         ]
-
-
-
-
     -- to do: review this code
     pixelPositionToBlockId :: (Float, Float) -> Int
     pixelPositionToBlockId (x, y) =
@@ -115,7 +85,7 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
         where
             numRows = length level
             numCols = length (head level)
-            xOffset = tilePositionToPixelPosition (fromIntegral numCols)  / 2
+            xOffset = tilePositionToPixelPosition (fromIntegral numCols) / 2
             yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
 
 

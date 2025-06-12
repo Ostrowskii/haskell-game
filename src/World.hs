@@ -2,9 +2,11 @@ module World (startGame) where
 
     import Graphics.Gloss
     import Graphics.Gloss.Interface.Pure.Game
+    import Graphics.Gloss.Juicy (loadJuicyPNG)
+    
     import Map (drawMap)
     import Moviment (handleInputMoviment, updateWorld)
-    import Types (WorldData(..), Direction(..))
+    import Types (WorldData(..), Direction(..), GameItem(..))
 
     windowWidthInPixels, windowHeightInPixels :: Int
     windowWidthInPixels = 500
@@ -22,8 +24,8 @@ module World (startGame) where
 
 
     -- player initial pos included
-    initialState :: WorldData
-    initialState = WorldData
+    initialState ::  WorldData
+    initialState  = WorldData
         { timer = 0
         , playerPosition = (0,0)
         , isWPressed = False
@@ -31,16 +33,34 @@ module World (startGame) where
         , isSPressed = False
         , isDPressed = False
         , playerLastDirection = DirectionLeft
+        -- , worldItems = items
         }
 
     drawPlayer :: (Float, Float)  ->  Picture
     drawPlayer (x,y)  = translate x y (color green (rectangleSolid 32 32))
 
-    drawWorld :: WorldData -> Picture
-    drawWorld world = pictures
+    drawItems :: [GameItem] -> Picture
+    drawItems    itemsGame = pictures
+        [
+            translate x y pic | GameItem (x, y) pic <- itemsGame
+        ]
+
+
+    loadImages :: [Picture] -> [GameItem]
+    loadImages   itemImages  = 
+        [
+            GameItem (64, 64) (itemImages !! 0)
+        ]
+
+
+    drawWorld ::    [GameItem] ->    WorldData   -> Picture
+    drawWorld       itemsGame           world       = pictures
         [
             drawMap,
-            drawPlayer (playerPosition world)
+            drawPlayer (playerPosition world),
+            drawItems itemsGame
+            --rever isso?
+            -- pictures [translate x y pic | GameItem (x, y) pic <- worldItems world ]
         ]
 
 
@@ -52,14 +72,15 @@ module World (startGame) where
     --  handleInput = handleInputMoviment
 
     
-    startGame :: IO()
-    startGame = play
-                (InWindow "Lucy testando Gloss!"
-                    (windowWidthInPixels, windowHeightInPixels)
-                    (windowPositionLeft, windowPositionTop))
-                backgroundColor
-                fps
-                initialState
-                drawWorld
-                handleInput
-                updateWorld
+    startGame :: [Picture] -> IO()
+    startGame  itemsImages =
+        play
+            (InWindow "Lucy testando Gloss!"
+                (windowWidthInPixels, windowHeightInPixels)
+                (windowPositionLeft, windowPositionTop))
+            backgroundColor
+            fps
+            initialState
+            (drawWorld (loadImages itemsImages))
+            handleInput
+            updateWorld
