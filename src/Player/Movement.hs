@@ -17,8 +17,8 @@ module Player.Movement (handleInputMoviment, updateWorld) where
     -- if 3 diagonal speed = 2.12132
     playerDiagonalSpeed = 2.12132
 
-    spaceBetweenWallAndPlayer :: Float 
-    spaceBetweenWallAndPlayer = 0.001
+    stopAreaBetweenWallAndPlayer :: Float 
+    stopAreaBetweenWallAndPlayer = 0.0001
 
     handleInputMoviment :: Event -> WorldData -> WorldData
     handleInputMoviment (EventKey (Char 'w') Down _ _)  world  =  world { isWPressed = True, playerLastDirection = DirectionUp }
@@ -47,12 +47,10 @@ module Player.Movement (handleInputMoviment, updateWorld) where
         in
             if isDiagonal then ( x *  playerDiagonalSpeed, y * playerDiagonalSpeed) else (x * playerStraightSpeed, y * playerStraightSpeed)
 
+    calculoArredondamento :: Float -> Float -> Float
+    calculoArredondamento    x actualSpaceBetweenWallAndPlayer =  
+        if actualSpaceBetweenWallAndPlayer < stopAreaBetweenWallAndPlayer then 0 else actualSpaceBetweenWallAndPlayer
 
-    calculoArredondamento :: Float -> Float
-    calculoArredondamento x =  if (x `mod'` 32) > -spaceBetweenWallAndPlayer then (x `mod'` 32) -spaceBetweenWallAndPlayer else (x `mod'` 32)
-
-    -- calculoArredondamento :: Float -> Float
-    -- calculoArredondamento    xPos   = resto xPos
 
     updateWorld :: Float -> WorldData -> WorldData
     updateWorld     _       world      =
@@ -67,38 +65,32 @@ module Player.Movement (handleInputMoviment, updateWorld) where
             yBlockHasColision = isBlockSolidAt futureBlockOnY
 
 
-
-
-
             --todo : criar essas variaveis somente se tiver colisao/?
-            xOnColision =  calculoArredondamento    x
-            yOnColision =  calculoArredondamento    y
+            xOnColisionWalkingStraght =  calculoArredondamento    x xActualSpaceBetweenWallAndPlayer
+            yOnColisionWalkingStraght =  calculoArredondamento    y yActualSpaceBetweenWallAndPlayer
 
+            xActualSpaceBetweenWallAndPlayer = (x `mod'` 32)
+            yActualSpaceBetweenWallAndPlayer = (y `mod'` 32)
 
+            isMovimentDiagonalAndThereisSpaceOnX = movimentOnX ==  playerDiagonalSpeed && xActualSpaceBetweenWallAndPlayer > playerDiagonalSpeed
+            isPlayerAlreadyByWallOnX = xBlockHasColision && (xActualSpaceBetweenWallAndPlayer >= stopAreaBetweenWallAndPlayer)
 
-            isMovimentDiagonalAndThereisSpaceOnX = movimentOnX ==  playerDiagonalSpeed && xOnColision > playerDiagonalSpeed
-            isPlayerAlreadyByWallOnX = xBlockHasColision && xOnColision >= spaceBetweenWallAndPlayer
-
-            isMovimentDiagonalAndThereisSpaceOnY = movimentOnY ==  playerDiagonalSpeed && yOnColision > playerDiagonalSpeed
-            isPlayerAlreadyByWallOnY = yBlockHasColision && yOnColision >= spaceBetweenWallAndPlayer
-
+            isMovimentDiagonalAndThereisSpaceOnY = movimentOnY ==  playerDiagonalSpeed && yActualSpaceBetweenWallAndPlayer > playerDiagonalSpeed
+            isPlayerAlreadyByWallOnY = yBlockHasColision && (yActualSpaceBetweenWallAndPlayer >= stopAreaBetweenWallAndPlayer)
 
 
 
             calculateMovimentWithColisionOnX
               | isPlayerAlreadyByWallOnX = x
               | isMovimentDiagonalAndThereisSpaceOnX = x + movimentOnX 
-              | otherwise = x + xOnColision 
+              | otherwise = x + xOnColisionWalkingStraght 
             
             calculateMovimentWithColisionOnY
               | isPlayerAlreadyByWallOnY = y
               | isMovimentDiagonalAndThereisSpaceOnY = y + movimentOnY 
-              | otherwise = y + yOnColision 
+              | otherwise = y + yOnColisionWalkingStraght
+ 
 
-
-
-            -- movimentWithColitionOnX   =    calculateMovimentWithColisionOnX
-            -- movimentWithColitionOnY   =   calculateMovimentWithColisionOnY
 
             actualMovimentOnX
                 | (movimentOnX == 0) = x
@@ -112,13 +104,3 @@ module Player.Movement (handleInputMoviment, updateWorld) where
 
             actualMoviment  =   (actualMovimentOnX, actualMovimentOnY)
         in world { playerPosition = actualMoviment}
-
-
--- x + (xOnColision* signum movimentOnX) 
-
-        --     actualMoviment  =   (if  canPlayerMoveX then futurePositionX else x, if canPlayerMoveY then futurePositionY else y)
-        -- in world { playerPosition = actualMoviment}
-
-            --            se estiver em movimento então verifique se o bloco tem colisão se não estiver em movimento, não faça calculos
-            -- canPlayerMoveX      = ((movimentOnX /= 0) && not xBlockHasColision)
-            -- canPlayerMoveY      = ((movimentOnY /= 0) && not yBlockHasColision)

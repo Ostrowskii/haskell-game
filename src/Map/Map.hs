@@ -6,6 +6,7 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
     import Map.Block.RedBlock
     import Map.Block.BlueBlock
     import Map.Block.Blocks (idBlocksWithColition)
+    
     tileSizeInPixel :: Int
     tileSizeInPixel = 32
 
@@ -38,6 +39,10 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
     tileToBlock     2       = blueBlockAt
     tileToBlock     _       = \_ -> blank
 
+    quantityLevelCol, quantityLevelRow :: Int 
+    quantityLevelCol = length (head level)
+    quantityLevelRow = length level
+
 
     tilePositionToPixelPosition :: Float -> Float
     tilePositionToPixelPosition tile = tile * fromIntegral tileSizeInPixel
@@ -64,12 +69,8 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
             xInLevel = floor (pixelPositionToTilePosition adjustedX)
             yInLevel = floor (pixelPositionToTilePosition adjustedY)
 
-            safeIndex i maxI = max 0 (min i (maxI - 1))
-
-            maxRow = length level
-            maxCol = length (head level)
-            ySafe = safeIndex yInLevel maxRow
-            xSafe = safeIndex xInLevel maxCol
+            ySafe = makeSureIndexInsideLevel yInLevel quantityLevelRow
+            xSafe = makeSureIndexInsideLevel xInLevel quantityLevelCol
         in
             (level !! ySafe) !! xSafe
 
@@ -89,13 +90,6 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
 
     xMapCenteringValue, yMapCenteringValue :: Float
-    xMapCenteringValue =
-        let
-            numberCols = length (head level)
-            xCenteringOffSet = tilePositionToPixelPosition (fromIntegral numberCols-1) /2
-        in xCenteringOffSet
-    yMapCenteringValue =
-        let 
-            numberRows = length level
-            yCenteringOffSet = tilePositionToPixelPosition (fromIntegral numberRows-1) /2
-        in yCenteringOffSet
+    xMapCenteringValue = tilePositionToPixelPosition (fromIntegral quantityLevelCol -1) /2
+    yMapCenteringValue = tilePositionToPixelPosition (fromIntegral quantityLevelRow -1) /2
+
