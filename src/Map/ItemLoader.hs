@@ -15,3 +15,7 @@ module Map.ItemLoader (drawItems, loadItemImages) where
             GameItem (tilePositionToPixelCentered (3,2)) (itemImages !! 2)
         ]
 
+
+    drawPlayer :: (Float, Float)  ->  Picture
+    drawPlayer (x,y)  = translate x y (color green (rectangleSolid 32 32))
+ 

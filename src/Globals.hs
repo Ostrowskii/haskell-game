@@ -6,8 +6,8 @@ module Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, wi
 
         -- game SETTINGS
     windowWidthInPixels, windowHeightInPixels :: Int
-    windowWidthInPixels = 500
-    windowHeightInPixels = 500
+    windowWidthInPixels = 890
+    windowHeightInPixels = 640
 
     windowPositionTop, windowPositionLeft :: Int
     windowPositionTop = 100

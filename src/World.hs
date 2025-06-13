@@ -6,18 +6,20 @@ module World (startGame) where
 
     import Types (WorldData(..), Direction(..), GameItem(..))
 
-    import Player.Movement (handleInputMoviment, updateWorld)
+    import Player.Movement (handleInputMoviment, updatePlayerMoviment)
+    import Player.Player (drawPlayer)
     import Map.ItemLoader(drawItems, loadItemImages)
     import Map.Map (drawMap, tilePositionToPixelCentered)
-    import Player.Player (drawPlayer)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
+    import Interface.Time (updateTime, drawTimer)
 
     drawWorld ::        WorldData   -> Picture
     drawWorld             world       = pictures
         [
             drawMap,
             drawPlayer (playerPosition world),
-            drawItems  (worldItems world)
+            drawItems  (worldItems world),
+            drawTimer  (timer world)
         ]
 
     handleInput :: Event -> WorldData -> WorldData
@@ -36,6 +38,11 @@ module World (startGame) where
         , worldItems = items
         }
 
+    updateWorld :: Float -> WorldData -> WorldData
+    updateWorld    dt       world= 
+        let worldAfterPlayerMoviment = updatePlayerMoviment dt world
+            worldAfterUpdateTime = updateTime dt worldAfterPlayerMoviment
+        in worldAfterUpdateTime
 
     startGame :: [Picture] -> IO()
     startGame  itemsImages =

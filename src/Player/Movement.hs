@@ -1,4 +1,4 @@
-module Player.Movement (handleInputMoviment, updateWorld) where
+module Player.Movement (handleInputMoviment, updatePlayerMoviment) where
 
     import Graphics.Gloss
     import Graphics.Gloss.Interface.Pure.Game
@@ -52,8 +52,8 @@ module Player.Movement (handleInputMoviment, updateWorld) where
         if actualSpaceBetweenWallAndPlayer < stopAreaBetweenWallAndPlayer then 0 else actualSpaceBetweenWallAndPlayer
 
 
-    updateWorld :: Float -> WorldData -> WorldData
-    updateWorld     _       world      =
+    updatePlayerMoviment :: Float -> WorldData -> WorldData
+    updatePlayerMoviment     _       world      =
         let (x, y)                                  = playerPosition        world
             (movimentOnX, movimentOnY)              = calculateMoviment     world
             (futurePositionX, futurePositionY)      = (x + movimentOnX, y + movimentOnY)

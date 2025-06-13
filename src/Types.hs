@@ -8,7 +8,7 @@ module Types (WorldData(..), Direction(..), GameItem(..), Position) where
 
 
     data WorldData = WorldData 
-        { timer :: Int 
+        { timer :: Float 
         , playerPosition :: (Float, Float)  
         , isWPressed :: Bool 
         , isAPressed :: Bool 
@@ -16,7 +16,6 @@ module Types (WorldData(..), Direction(..), GameItem(..), Position) where
         , isDPressed :: Bool 
         , playerLastDirection :: Direction
         , worldItems :: [GameItem] 
-
         }
 
     data Direction = DirectionUp | DirectionDown | DirectionLeft | DirectionRight deriving (Eq, Show)
