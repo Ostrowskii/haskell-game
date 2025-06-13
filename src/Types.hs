@@ -15,7 +15,7 @@ module Types (WorldData(..), Direction(..), GameItem(..), Position) where
         , isSPressed :: Bool 
         , isDPressed :: Bool 
         , playerLastDirection :: Direction
-        -- , worldItems :: [GameItem] 
+        , worldItems :: [GameItem] 
 
         }
 

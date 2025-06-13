@@ -1,18 +1,19 @@
-module Moviment (handleInputMoviment, updateWorld) where
+module Player.Movement (handleInputMoviment, updateWorld) where
 
     import Graphics.Gloss
     import Graphics.Gloss.Interface.Pure.Game
     import Data.Fixed (mod')
 
     import Types (WorldData(..), Direction(..))
-    import Block.Blocks (idBlocksWithColition)
-    import Map (pixelPositionToBlockId, isBlockSolidAt)
+    
+    import Map.Block.Blocks (idBlocksWithColition)
+    import Map.Map (pixelPositionToBlockId, isBlockSolidAt)
 
-    playerSpeedStraight :: Float
-    playerSpeedStraight = 3
+    playerStraightSpeed :: Float
+    playerStraightSpeed = 3
 
     playerDiagonalSpeed :: Float
-    -- playerDiagonalSpeed  playerSpeedStraight =  playerSpeedStraight * sqrt 2.0
+    -- playerDiagonalSpeed  playerStraightSpeed =  playerStraightSpeed * sqrt 2.0
     -- if 3 diagonal speed = 2.12132
     playerDiagonalSpeed = 2.12132
 
@@ -44,7 +45,7 @@ module Moviment (handleInputMoviment, updateWorld) where
             y           = (if up then 1 else 0)     + (if down then -1 else 0)
             isDiagonal  = (x /= 0) && (y /= 0)
         in
-            if isDiagonal then ( x *  playerDiagonalSpeed, y * playerDiagonalSpeed) else (x * playerSpeedStraight, y * playerSpeedStraight)
+            if isDiagonal then ( x *  playerDiagonalSpeed, y * playerDiagonalSpeed) else (x * playerStraightSpeed, y * playerStraightSpeed)
 
 
     calculoArredondamento :: Float -> Float

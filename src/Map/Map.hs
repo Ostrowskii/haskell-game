@@ -1,9 +1,9 @@
-module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
+module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
     import Graphics.Gloss
-    import Block.RedBlock
-    import Block.BlueBlock
-    import Block.Blocks (idBlocksWithColition)
+    import Map.Block.RedBlock
+    import Map.Block.BlueBlock
+    import Map.Block.Blocks (idBlocksWithColition)
     tileSizeInPixel :: Int
     tileSizeInPixel = 32
 
@@ -13,18 +13,22 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
     level :: TileMap
     level =
         [ 
-          [0,0,0,0,0,0,0,0,0,0,0,0,0]
-        , [0,0,0,0,0,0,0,0,0,0,0,0,0]
-        , [0,0,0,1,1,1,1,1,1,1,0,0,0]
-        , [0,0,0,0,0,0,0,0,0,0,0,0,0]
-        , [0,0,0,1,0,0,0,0,2,1,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,1,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,1,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,1,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,1,0,0,0]
-        , [0,0,0,1,1,0,0,1,1,1,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,0,0,0,0]
-        , [0,0,0,0,0,0,0,0,0,0,0,0,0]
+          [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
+        , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        , [0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0]
+        , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        , [0,0,0,1,0,0,0,0,2,1,0,0,0,0,0,0]
+        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+        , [2,0,0,1,0,0,0,0,0,1,0,0,0,0,0,2]
+        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+        , [0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0]
+        , [0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0]
+        , [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0]
+        , [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
         ]
 
     tileToBlock ::  Int     -> (Float, Float)  -> Picture
@@ -88,4 +92,13 @@ module Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
             xOffset = tilePositionToPixelPosition (fromIntegral numCols) / 2
             yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
 
+
+    mapCenteringValues :: (Float, Float)
+    mapCenteringValues =
+        let
+            numberRows = length level
+            numberCols = length (head level)
+            centeringOffSetX = tilePositionToPixelPosition (fromIntegral numberCols-1) /2
+            centeringOffSetY = tilePositionToPixelPosition (fromIntegral numberRows-1) /2
+        in (centeringOffSetX, centeringOffSetY)
 

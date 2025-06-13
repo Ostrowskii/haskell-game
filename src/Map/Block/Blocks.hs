@@ -1,4 +1,4 @@
-module Block.Blocks (blockSize, idBlocksWithColition) where
+module Map.Block.Blocks (blockSize, idBlocksWithColition) where
 
 
     blockSize :: Float

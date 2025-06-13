@@ -3,7 +3,6 @@ module Main where
   import World
   import Graphics.Gloss
   import Graphics.Gloss.Juicy (loadJuicyPNG)
-  import Types (GameItem(..))
 
 
   loadImages :: [FilePath] -> IO [Picture]
@@ -17,16 +16,7 @@ module Main where
     itemImages <- loadImages
       [  "src/img/gutiguti.png"
         ,"src/img/icecream.png"
+        ,"src/img/yorgut.png"
       ]
 
     startGame itemImages
-
-
-
-  -- main :: IO ()
-  -- main = do
-  --   --todo aprender o que é Just
-  --   Just itemImage <- loadJuicyPNG "src/img/gutiguti.png"
-  --   -- let scaledImageItem = scale 0.05 0.05 itemImage
-  --   let initialItems = [GameItem (90,64) scaledImageItem]
-  --   startGame initialItems

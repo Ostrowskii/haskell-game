@@ -1,6 +1,6 @@
-module Block.RedBlock (redBlockAt) where
+module Map.Block.RedBlock (redBlockAt) where
     import Graphics.Gloss
-    import Block.Blocks
+    import Map.Block.Blocks (blockSize)
 
 
 
