@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Move guards forward" #-}
 module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
     import Graphics.Gloss
@@ -12,7 +14,7 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
     level :: TileMap
     level =
-        [ 
+        [
           [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
         , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         , [0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0]
@@ -52,22 +54,18 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
         in          idBlock `elem` idBlocksWithColition || idBlock2 `elem` idBlocksWithColition || idBlock3 `elem` idBlocksWithColition || idBlock4 `elem` idBlocksWithColition
 
-    -- to do: review this code
     pixelPositionToBlockId :: (Float, Float) -> Int
     pixelPositionToBlockId (x, y) =
         let
-            numRows = length level
-            numCols = length (head level)
-            xOffset = tilePositionToPixelPosition (fromIntegral numCols) / 2
-            yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
 
-            adjustedX = x + xOffset
-            adjustedY = -y + yOffset
+            adjustedX = x + xMapCenteringValue
+            adjustedY = -y + yMapCenteringValue
 
             xInLevel = floor (pixelPositionToTilePosition adjustedX)
             yInLevel = floor (pixelPositionToTilePosition adjustedY)
 
-            safeIndex i maxI = max 0 (min i (maxI - 1)) 
+            safeIndex i maxI = max 0 (min i (maxI - 1))
+
             maxRow = length level
             maxCol = length (head level)
             ySafe = safeIndex yInLevel maxRow
@@ -75,7 +73,9 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
         in
             (level !! ySafe) !! xSafe
 
-    -- to do review this code
+    makeSureIndexInsideLevel :: Int -> Int -> Int
+    makeSureIndexInsideLevel    i       maxI = max 0 (min i (maxI - 1))
+
     drawMap :: Picture
     drawMap = pictures
             [ tileToBlock tile (x, y)
@@ -83,22 +83,19 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
             | (rowIndex, row) <- zip [0 ..] level
             -- (numero da coluna, literalmente o valor do bloco) 
             , (colIndex, tile) <- zip [0 ..] row
-            , let x = fromIntegral (colIndex * tileSizeInPixel) - xOffset
-            , let y = fromIntegral (-(rowIndex * tileSizeInPixel)) + yOffset
+            , let x = fromIntegral (colIndex * tileSizeInPixel) - xMapCenteringValue
+            , let y = fromIntegral (-(rowIndex * tileSizeInPixel)) + yMapCenteringValue
             ]
-        where
-            numRows = length level
-            numCols = length (head level)
-            xOffset = tilePositionToPixelPosition (fromIntegral numCols) / 2
-            yOffset = tilePositionToPixelPosition (fromIntegral numRows) / 2
 
 
-    mapCenteringValues :: (Float, Float)
-    mapCenteringValues =
+    xMapCenteringValue, yMapCenteringValue :: Float
+    xMapCenteringValue =
         let
-            numberRows = length level
             numberCols = length (head level)
-            centeringOffSetX = tilePositionToPixelPosition (fromIntegral numberCols-1) /2
-            centeringOffSetY = tilePositionToPixelPosition (fromIntegral numberRows-1) /2
-        in (centeringOffSetX, centeringOffSetY)
-
+            xCenteringOffSet = tilePositionToPixelPosition (fromIntegral numberCols-1) /2
+        in xCenteringOffSet
+    yMapCenteringValue =
+        let 
+            numberRows = length level
+            yCenteringOffSet = tilePositionToPixelPosition (fromIntegral numberRows-1) /2
+        in yCenteringOffSet
