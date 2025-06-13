@@ -1,7 +1,10 @@
 module Map.ItemLoader (drawItems, loadItemImages) where
 
-    import Types (GameItem(..))
     import Graphics.Gloss
+    import Types (GameItem(..))
+
+    import Map.Map (tilePositionToPixelCentered)
+    
 
     drawItems :: [GameItem] -> Picture
     drawItems    itemsGame = pictures [translate x y pic | GameItem (x, y) pic <- itemsGame        ]
@@ -9,6 +12,6 @@ module Map.ItemLoader (drawItems, loadItemImages) where
     loadItemImages :: [Picture] -> [GameItem]
     loadItemImages   itemImages  =
         [
-            GameItem (64, 64) (itemImages !! 2)
+            GameItem (tilePositionToPixelCentered (3,2)) (itemImages !! 2)
         ]
 

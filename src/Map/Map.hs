@@ -1,12 +1,12 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Move guards forward" #-}
-module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
+module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt, tilePositionToPixelCentered) where
 
     import Graphics.Gloss
     import Map.Block.RedBlock
     import Map.Block.BlueBlock
     import Map.Block.Blocks (idBlocksWithColition)
-    
+
     tileSizeInPixel :: Int
     tileSizeInPixel = 32
 
@@ -15,24 +15,51 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
 
     level :: TileMap
     level =
-        [
-          [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
-        , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        , [0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0]
-        , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        , [0,0,0,1,0,0,0,0,2,1,0,0,0,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
-        , [2,0,0,1,0,0,0,0,0,1,0,0,0,0,0,2]
-        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
-        , [0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0]
-        , [0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0]
-        , [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0]
-        , [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
+
+        [ replicate 28 1
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        ,  replicate 4 1 ++ [0,0] ++ replicate 7 1 ++ [0,0] ++ replicate 7 1 ++ [0,0] ++ replicate 4 1
+        , [1] ++ replicate 26 0 ++ [1]
+        , [1] ++ replicate 26 0 ++ [1]
+        ,  replicate 4 1 ++ [0,0] ++ replicate 7 1 ++ [0,0] ++ replicate 7 1 ++ [0,0] ++ replicate 4 1
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , replicate 28 1
         ]
+
+
+        -- level :: TileMap
+    -- level2 =
+    --     [
+    --       [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
+    --     , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    --     , [0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0]
+    --     , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    --     , [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    --     , [0,0,0,1,0,0,0,0,2,1,0,0,0,0,0,0]
+    --     , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+    --     , [2,0,0,1,0,0,0,0,0,1,0,0,0,0,0,2]
+    --     , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+    --     , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+    --     , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+    --     , [0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0]
+    --     , [0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0]
+    --     , [0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0]
+    --     , [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0]
+    --     , [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0]
+    --     ]
+    
 
     tileToBlock ::  Int     -> (Float, Float)  -> Picture
     tileToBlock     1       = redBlockAt
@@ -93,3 +120,11 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt) where
     xMapCenteringValue = tilePositionToPixelPosition (fromIntegral quantityLevelCol -1) /2
     yMapCenteringValue = tilePositionToPixelPosition (fromIntegral quantityLevelRow -1) /2
 
+
+--test this function
+
+    tilePositionToPixelCentered :: (Int, Int) -> (Float, Float)
+    tilePositionToPixelCentered (row, col) =
+        let x = fromIntegral (col * tileSizeInPixel) - xMapCenteringValue
+            y = fromIntegral (-(row * tileSizeInPixel)) + yMapCenteringValue
+        in (x, y)

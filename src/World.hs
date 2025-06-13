@@ -8,7 +8,7 @@ module World (startGame) where
 
     import Player.Movement (handleInputMoviment, updateWorld)
     import Map.ItemLoader(drawItems, loadItemImages)
-    import Map.Map (drawMap)
+    import Map.Map (drawMap, tilePositionToPixelCentered)
     import Player.Player (drawPlayer)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
 
@@ -27,7 +27,7 @@ module World (startGame) where
     initialState :: [GameItem] ->  WorldData
     initialState    items =     WorldData
         { timer = 0
-        , playerPosition = (0,0)
+        , playerPosition = tilePositionToPixelCentered (5,5)
         , isWPressed = False
         , isAPressed = False
         , isSPressed = False
