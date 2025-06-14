@@ -37,6 +37,7 @@ module World (startGame) where
         , isDPressed = False
         , playerLastDirection = DirectionLeft
         , worldItems = items
+        
         }
 
     updateWorld :: Float -> WorldData -> WorldData
