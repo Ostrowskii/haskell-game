@@ -3,6 +3,7 @@ module Types (WorldData(..), Direction(..), GameItem(..), Position) where
     import Graphics.Gloss (Picture)
 
     type Position = (Float, Float)
+    
 
     data GameItem = GameItem Position Picture
 

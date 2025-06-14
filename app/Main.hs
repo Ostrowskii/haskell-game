@@ -16,7 +16,11 @@ module Main where
     itemImages <- loadImages
       [  "src/img/gutiguti.png"
         ,"src/img/icecream.png"
-        ,"src/img/yorgut.png"
+        ,"src/img/yogurt.png"
+      ]
+    otherImages <- loadImages 
+      [
+        "src/img/sickfriendlonghair.png"
       ]
 
-    startGame itemImages
+    startGame itemImages otherImages

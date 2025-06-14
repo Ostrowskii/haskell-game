@@ -8,18 +8,19 @@ module World (startGame) where
 
     import Player.Movement (handleInputMoviment, updatePlayerMoviment)
     import Player.Player (drawPlayer)
-    import Map.ItemLoader(drawItems, loadItemImages)
+    import Map.ItemLoader(drawItems, loadItemImages, drawSickFriend)
     import Map.Map (drawMap, tilePositionToPixelCentered)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
     import Interface.Time (updateTime, drawTimer)
 
-    drawWorld ::        WorldData   -> Picture
-    drawWorld             world       = pictures
+    drawWorld ::   [Picture] ->     WorldData   -> Picture
+    drawWorld    otherImages          world       = pictures
         [
             drawMap,
             drawPlayer (playerPosition world),
             drawItems  (worldItems world),
-            drawTimer  (timer world)
+            drawTimer  (timer world),
+            drawSickFriend
         ]
 
     handleInput :: Event -> WorldData -> WorldData
@@ -44,8 +45,8 @@ module World (startGame) where
             worldAfterUpdateTime = updateTime dt worldAfterPlayerMoviment
         in worldAfterUpdateTime
 
-    startGame :: [Picture] -> IO()
-    startGame  itemsImages =
+    startGame :: [Picture] -> [Picture] -> IO()
+    startGame  itemsImages otherImages =
         play
             (InWindow "Lucy loves Gloss!"
                 (windowWidthInPixels, windowHeightInPixels)
@@ -53,6 +54,6 @@ module World (startGame) where
             backgroundColor
             fps
             (initialState (loadItemImages itemsImages))
-            drawWorld
+            (drawWorld otherImages)
             handleInput
             updateWorld

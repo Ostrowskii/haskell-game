@@ -1,4 +1,4 @@
-module Map.ItemLoader (drawItems, loadItemImages) where
+module Map.ItemLoader (drawItems, loadItemImages, drawSickFriend) where
 
     import Graphics.Gloss
     import Types (GameItem(..))
@@ -16,6 +16,8 @@ module Map.ItemLoader (drawItems, loadItemImages) where
         ]
 
 
-    drawPlayer :: (Float, Float)  ->  Picture
-    drawPlayer (x,y)  = translate x y (color green (rectangleSolid 32 32))
+    drawSickFriend ::  Picture
+    drawSickFriend = 
+        let (x,y) = tilePositionToPixelCentered (2,2)
+        in  translate x y (color yellow (rectangleSolid 32 32))
  
