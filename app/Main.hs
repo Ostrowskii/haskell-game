@@ -19,8 +19,11 @@ module Main where
         ,"src/img/yogurt.png"
       ]
     otherImages <- loadImages 
-      [
-        "src/img/sickfriendlonghair.png"
+      [   "src/img/sickfriendlonghair.png"
+        , "src/img/characterUp.png"
+        , "src/img/characterRight.png"
+        , "src/img/characterDown.png"
+        , "src/img/characterLeft.png"
       ]
 
     startGame itemImages otherImages

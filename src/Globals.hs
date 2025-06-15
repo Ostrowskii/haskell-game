@@ -8,6 +8,8 @@ module Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, wi
     windowWidthInPixels, windowHeightInPixels :: Int
     windowWidthInPixels = 890
     windowHeightInPixels = 640
+    -- windowWidthInPixels = 1600
+    -- windowHeightInPixels = 1200
 
     windowPositionTop, windowPositionLeft :: Int
     windowPositionTop = 100

@@ -5,7 +5,7 @@ module Player.Movement (handleInputMoviment, updatePlayerMoviment) where
     import Data.Fixed (mod')
 
     import Types (WorldData(..), Direction(..))
-    
+
     import Map.Block.Blocks (idBlocksWithColition)
     import Map.Map (pixelPositionToBlockId, isBlockSolidAt)
 
@@ -17,25 +17,31 @@ module Player.Movement (handleInputMoviment, updatePlayerMoviment) where
     -- if 3 diagonal speed = 2.12132
     playerDiagonalSpeed = 2.12132
 
-    stopAreaBetweenWallAndPlayer :: Float 
+    stopAreaBetweenWallAndPlayer :: Float
     stopAreaBetweenWallAndPlayer = 0.0001
 
+    --i am changing sprites on keyboard interactions then i could save some computer processing by not checking every frame
     handleInputMoviment :: Event -> WorldData -> WorldData
     handleInputMoviment (EventKey (Char 'w') Down _ _)  world  =  world { isWPressed = True, playerLastDirection = DirectionUp }
-    handleInputMoviment (EventKey (Char 'w') Up _ _)    world  =  world { isWPressed = False}
+    handleInputMoviment (EventKey (Char 'w') Up _ _)    world  =  world { isWPressed = False, playerLastDirection = if isSPressed world then DirectionDown else playerLastDirection world}
     handleInputMoviment (EventKey (Char 's') Down _ _)  world  =  world { isSPressed = True, playerLastDirection = DirectionDown }
-    handleInputMoviment (EventKey (Char 's') Up _ _)    world  =  world { isSPressed = False}
+    handleInputMoviment (EventKey (Char 's') Up _ _)    world  =  world { isSPressed = False, playerLastDirection = if isWPressed world then DirectionUp else playerLastDirection world}
 
     handleInputMoviment (EventKey (Char 'd') Down _ _)  world  =  world { isDPressed = True, playerLastDirection = DirectionRight }
-    handleInputMoviment (EventKey (Char 'd') Up _ _)    world  =  world { isDPressed = False }
+    handleInputMoviment (EventKey (Char 'd') Up _ _)    world  =  world { isDPressed = False, playerLastDirection = if isAPressed world then DirectionLeft else playerLastDirection world}
     handleInputMoviment (EventKey (Char 'a') Down _ _)  world  =  world { isAPressed = True, playerLastDirection = DirectionLeft }
-    handleInputMoviment (EventKey (Char 'a') Up _ _)    world  =  world { isAPressed = False }
+    handleInputMoviment (EventKey (Char 'a') Up _ _)    world  =  world { isAPressed = False, playerLastDirection = if isDPressed world then DirectionRight else playerLastDirection world}
 
     handleInputMoviment _ world = world
 
-    calculateMoviment :: WorldData        -> (Float, Float)
-    calculateMoviment    world =
-        --aparentemente podemos definir variaveis no retorno da função para ajudar a retornar um valor
+    theOpositeKey :: Direction -> Direction
+    theOpositeKey   DirectionUp = DirectionDown
+
+
+
+
+    calculateDirectionMoviment :: WorldData     -> (Float,Float)
+    calculateDirectionMoviment world =
         let
             up          = isWPressed world
             down        = isSPressed world
@@ -43,19 +49,28 @@ module Player.Movement (handleInputMoviment, updatePlayerMoviment) where
             right       = isDPressed world
             x           = (if right then 1 else 0)  + (if left then -1 else 0)
             y           = (if up then 1 else 0)     + (if down then -1 else 0)
+        in (x,y)
+
+
+    calculateMoviment :: (Float, Float)        -> (Float, Float)
+    calculateMoviment    (x,y) =
+        let
             isDiagonal  = (x /= 0) && (y /= 0)
+            moviment    = if isDiagonal then ( x *  playerDiagonalSpeed, y * playerDiagonalSpeed) else (x * playerStraightSpeed, y * playerStraightSpeed)
         in
-            if isDiagonal then ( x *  playerDiagonalSpeed, y * playerDiagonalSpeed) else (x * playerStraightSpeed, y * playerStraightSpeed)
+            moviment
+
 
     calculoArredondamento :: Float -> Float -> Float
-    calculoArredondamento    x actualSpaceBetweenWallAndPlayer =  
+    calculoArredondamento    x actualSpaceBetweenWallAndPlayer =
         if actualSpaceBetweenWallAndPlayer < stopAreaBetweenWallAndPlayer then 0 else actualSpaceBetweenWallAndPlayer
 
 
     updatePlayerMoviment :: Float -> WorldData -> WorldData
     updatePlayerMoviment     _       world      =
         let (x, y)                                  = playerPosition        world
-            (movimentOnX, movimentOnY)              = calculateMoviment     world
+            (xDirection, yDirection)                = calculateDirectionMoviment world -- valores -1 0 ou 1
+            (movimentOnX, movimentOnY)              = calculateMoviment     (xDirection, yDirection)
             (futurePositionX, futurePositionY)      = (x + movimentOnX, y + movimentOnY)
 
             futureBlockOnX = (futurePositionX, y)
@@ -65,7 +80,6 @@ module Player.Movement (handleInputMoviment, updatePlayerMoviment) where
             yBlockHasColision = isBlockSolidAt futureBlockOnY
 
 
-            --todo : criar essas variaveis somente se tiver colisao/?
             xOnColisionWalkingStraght =  calculoArredondamento    x xActualSpaceBetweenWallAndPlayer
             yOnColisionWalkingStraght =  calculoArredondamento    y yActualSpaceBetweenWallAndPlayer
 
@@ -82,14 +96,14 @@ module Player.Movement (handleInputMoviment, updatePlayerMoviment) where
 
             calculateMovimentWithColisionOnX
               | isPlayerAlreadyByWallOnX = x
-              | isMovimentDiagonalAndThereisSpaceOnX = x + movimentOnX 
-              | otherwise = x + xOnColisionWalkingStraght 
-            
+              | isMovimentDiagonalAndThereisSpaceOnX = x + movimentOnX
+              | otherwise = x + xOnColisionWalkingStraght
+
             calculateMovimentWithColisionOnY
               | isPlayerAlreadyByWallOnY = y
-              | isMovimentDiagonalAndThereisSpaceOnY = y + movimentOnY 
+              | isMovimentDiagonalAndThereisSpaceOnY = y + movimentOnY
               | otherwise = y + yOnColisionWalkingStraght
- 
+
 
 
             actualMovimentOnX

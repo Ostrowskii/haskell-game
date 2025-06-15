@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Move guards forward" #-}
-module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt, tilePositionToPixelCentered) where
+module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt, inLevelPositionAt) where
 
     import Graphics.Gloss
     import Map.Block.RedBlock
@@ -101,8 +101,8 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt, tilePositionToP
 
 --test this function
 
-    tilePositionToPixelCentered :: (Int, Int) -> (Float, Float)
-    tilePositionToPixelCentered (row, col) =
+    inLevelPositionAt :: (Int, Int) -> (Float, Float)
+    inLevelPositionAt (row, col) =
         let x = fromIntegral (col * tileSizeInPixel) - xMapCenteringValue
             y = fromIntegral (-(row * tileSizeInPixel)) + yMapCenteringValue
         in (x, y)

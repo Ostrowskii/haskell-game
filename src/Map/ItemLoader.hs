@@ -3,7 +3,7 @@ module Map.ItemLoader (drawItems, loadItemImages, drawSickFriend) where
     import Graphics.Gloss
     import Types (GameItem(..))
 
-    import Map.Map (tilePositionToPixelCentered)
+    import Map.Map (inLevelPositionAt)
     
 
     drawItems :: [GameItem] -> Picture
@@ -12,12 +12,12 @@ module Map.ItemLoader (drawItems, loadItemImages, drawSickFriend) where
     loadItemImages :: [Picture] -> [GameItem]
     loadItemImages   itemImages  =
         [
-            GameItem (tilePositionToPixelCentered (3,2)) (itemImages !! 2)
+            GameItem (inLevelPositionAt (3,2)) (itemImages !! 2)
         ]
 
 
-    drawSickFriend ::  Picture
-    drawSickFriend = 
-        let (x,y) = tilePositionToPixelCentered (2,2)
-        in  translate x y (color yellow (rectangleSolid 32 32))
+    drawSickFriend :: Picture ->  Picture
+    drawSickFriend pixelArt = 
+        let (x,y) = inLevelPositionAt (2,12)
+        in pictures [translate x y pixelArt ]
  
