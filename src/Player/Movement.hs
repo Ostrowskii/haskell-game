@@ -37,9 +37,6 @@ module Player.Movement (handleInputMoviment, updatePlayerMoviment) where
     theOpositeKey :: Direction -> Direction
     theOpositeKey   DirectionUp = DirectionDown
 
-
-
-
     calculateDirectionMoviment :: WorldData     -> (Float,Float)
     calculateDirectionMoviment world =
         let

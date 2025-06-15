@@ -28,10 +28,10 @@ module World (startGame) where
     drawWorld    otherImages          world       = pictures
         [
             drawMap,
-            drawPlayer (playerPosition world) [(otherImages !! 1), (otherImages !! 2), (otherImages !! 3), (otherImages !! 4)] (playerLastDirection world),
             drawItems  (worldItems world),
             drawTimer  (timer world),
-            drawSickFriend (otherImages !! 0) -- 0 = sick friend image
+            drawSickFriend (otherImages !! 0), -- 0 = sick friend image
+            drawPlayer (playerPosition world) [(otherImages !! 1), (otherImages !! 2), (otherImages !! 3), (otherImages !! 4)] (playerLastDirection world)
         ]
 
     handleInput :: Event -> WorldData -> WorldData

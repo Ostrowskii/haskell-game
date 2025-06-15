@@ -18,6 +18,7 @@ module Map.ItemLoader (drawItems, loadItemImages, drawSickFriend) where
 
     drawSickFriend :: Picture ->  Picture
     drawSickFriend pixelArt = 
-        let (x,y) = inLevelPositionAt (2,12)
-        in pictures [translate x y pixelArt ]
+        let (x,y) = inLevelPositionAt (2,10)
+            y2 = y
+        in pictures [translate x y2 pixelArt ]
  

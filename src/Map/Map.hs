@@ -17,8 +17,8 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt, inLevelPosition
     level =
 
         [ replicate 28 1
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1, 3] ++ replicate 7 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 0 ++ [1, 3] ++ replicate 7 0 ++ [1] ++ replicate 8 0 ++ [1]
         , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
         , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
         , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
@@ -42,6 +42,7 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt, inLevelPosition
     tileToBlock ::  Int     -> (Float, Float)  -> Picture
     tileToBlock     1       = redBlockAt
     tileToBlock     2       = blueBlockAt
+    tileToBlock     3       = invisibleBlockAt
     tileToBlock     _       = \_ -> blank
 
     quantityLevelCol, quantityLevelRow :: Int 
