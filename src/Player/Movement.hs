@@ -23,19 +23,28 @@ module Player.Movement (handleInputMoviment, updatePlayerMoviment) where
     --i am changing sprites on keyboard interactions then i could save some computer processing by not checking every frame
     handleInputMoviment :: Event -> WorldData -> WorldData
     handleInputMoviment (EventKey (Char 'w') Down _ _)  world  =  world { isWPressed = True, playerLastDirection = DirectionUp }
-    handleInputMoviment (EventKey (Char 'w') Up _ _)    world  =  world { isWPressed = False, playerLastDirection = if isSPressed world then DirectionDown else playerLastDirection world}
+    handleInputMoviment (EventKey (Char 'w') Up _ _)    world  =  world { isWPressed = False, playerLastDirection = checkOtherDirections world{ isWPressed =False}}
     handleInputMoviment (EventKey (Char 's') Down _ _)  world  =  world { isSPressed = True, playerLastDirection = DirectionDown }
-    handleInputMoviment (EventKey (Char 's') Up _ _)    world  =  world { isSPressed = False, playerLastDirection = if isWPressed world then DirectionUp else playerLastDirection world}
+    handleInputMoviment (EventKey (Char 's') Up _ _)    world  =  world { isSPressed = False, playerLastDirection = checkOtherDirections world{ isSPressed =False}}
 
     handleInputMoviment (EventKey (Char 'd') Down _ _)  world  =  world { isDPressed = True, playerLastDirection = DirectionRight }
-    handleInputMoviment (EventKey (Char 'd') Up _ _)    world  =  world { isDPressed = False, playerLastDirection = if isAPressed world then DirectionLeft else playerLastDirection world}
+    handleInputMoviment (EventKey (Char 'd') Up _ _)    world  =  world { isDPressed = False, playerLastDirection = checkOtherDirections world{ isDPressed =False}}
     handleInputMoviment (EventKey (Char 'a') Down _ _)  world  =  world { isAPressed = True, playerLastDirection = DirectionLeft }
-    handleInputMoviment (EventKey (Char 'a') Up _ _)    world  =  world { isAPressed = False, playerLastDirection = if isDPressed world then DirectionRight else playerLastDirection world}
+    handleInputMoviment (EventKey (Char 'a') Up _ _)    world  =  world { isAPressed = False, playerLastDirection = checkOtherDirections world{ isAPressed =False}}
 
     handleInputMoviment _ world = world
 
-    theOpositeKey :: Direction -> Direction
-    theOpositeKey   DirectionUp = DirectionDown
+    checkOtherDirections :: WorldData -> Direction
+    checkOtherDirections    world     = 
+        let
+            direction  
+                | isAPressed world = DirectionLeft
+                | isDPressed world = DirectionRight
+                | isSPressed world = DirectionDown
+                | isWPressed world = DirectionUp
+                | otherwise = playerLastDirection world
+        in direction
+
 
     calculateDirectionMoviment :: WorldData     -> (Float,Float)
     calculateDirectionMoviment world =
