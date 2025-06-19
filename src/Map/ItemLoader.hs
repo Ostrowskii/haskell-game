@@ -17,36 +17,17 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop) 
             GameItem (tileToWorldPosition (4,4)) (itemImages !! 2) True
         ]
 
+    -- study this function again in the fututre. it is a function inside a function
     hideItemIfOnTop :: Position -> [GameItem] -> [GameItem]
     hideItemIfOnTop playerPosition items =
         let
-            (x, y) = playerPosition
-            (xTile, yTile) = worldToTilePosition (x,y)
-        in
-            if (xTile, yTile) == (4, 4)
-                then [GameItem pos pic False | GameItem pos pic _ <- items]
-                else items
-
-
-            -- then [ 
-            --         GameItem (x, y) pic False
-                    
-            --     | GameItem (x, y) pic True <- items
-            --     ]
-            -- else items
-            --     then [GameItem pos pic False | GameItem pos pic _ <- items]
-            --     else items
-
-
-
-
-    -- this works
-    -- hideItemIfOnTop :: Float -> [GameItem] -> [GameItem]
-    -- hideItemIfOnTop    timer  items = 
-    --     if timer > 10 then [GameItem pos pic False | GameItem pos pic _ <- items] else items
-
-
-
+            playerTilePos = worldToTilePosition playerPosition
+            updateItem (GameItem pos pic visible) =
+                let itemTilePos = worldToTilePosition pos
+                in if itemTilePos == playerTilePos || not visible
+                then GameItem pos pic False
+                else GameItem pos pic True
+        in map updateItem items
 
     drawSickFriend :: Picture ->  Picture
     drawSickFriend pixelArt =
@@ -54,56 +35,14 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop) 
             y2 = y
         in pictures [translate x y2 pixelArt]
 
-
-
-
-
-         --XX
-    -- collectItemIfOnTop :: Position -> [GameItem] -> [GameItem]
-    -- collectItemIfOnTop playerPos items =
-    --     let (px, py) = playerPos
-    --         playerTile = (pixelToTilePosition px, pixelToTilePosition py)
-    --     in [ if tile == playerTile && visible 
-    --             then GameItem tile pic False  
-    --             else GameItem tile pic visible
-    --     | GameItem tile pic visible <- items ]
-        --XX
-
-
-    -- makeItemInvisiable :: Int -> GameData -> GameData
-    -- makeItemInvisiable    i     ItemList = 
-
-
-
-            -- itemsOnGround = 
-
-
-    -- hideItemIfOnTop :: Position -> [GameItem] -> [GameItem]
-    -- hideItemIfOnTop playerPos items =
-    --     let (x, y) = playerPos
-    --         playerTile = (pixelToTilePosition x, pixelToTilePosition y)
-    --     in [ if pixelToTilePosition xI == fst playerTile &&
-    --             pixelToTilePosition yI == snd playerTile
-    --         then GameItem pos pic False
-    --         else GameItem pos pic visible
-    --     | GameItem pos@(xI, yI) pic visible <- items
-    --     ]
-
-
-    -- hideItemIfOnTop :: Position  [GameItem] -> [GameItem]
-    -- hideItemIfOnTop    playerPos  items = 
+    --made by accident but very interesting
+    -- temporarilyHideIfOnTop :: Position -> [GameItem] -> [GameItem]
+    -- temporarilyHideIfOnTop playerPosition items =
     --     let
-    --         (x,y) = playerPos
-    --         (xTile, yTile) = (pixelToTilePosition x, pixelToTilePosition y)
-            
-        
-    -- hideItemIfOnTop :: Float -> [GameItem] -> [GameItem]
-    -- hideItemIfOnTop timer items =
-    --     if timer > 10
-    --         then [ if (pixelToTilePosition x, pixelToTilePosition y) == (4,4)
-    --                 then GameItem (x, y) pic False
-    --                 else GameItem (x, y) pic visible
-    --             | GameItem (x, y) pic visible <- items
-    --             ]
-    --         else items
-
+    --         playerTilePos = worldToTilePosition playerPosition
+    --         hideIfSamePos (GameItem pos pic _) =
+    --             let itemTilePos = worldToTilePosition pos
+    --             in if itemTilePos == playerTilePos
+    --                 then GameItem pos pic False
+    --                 else GameItem pos pic True
+    --     in map hideIfSamePos items
