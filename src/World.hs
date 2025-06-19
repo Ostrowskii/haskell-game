@@ -11,10 +11,12 @@ module World (startGame) where
 
     import Player.Movement (handleInputMoviment, updatePlayerMoviment)
     import Player.Player (drawPlayer)
-    import Map.ItemLoader(drawItems, loadItemImages, drawSickFriend)
-    import Map.Map (drawMap, inLevelPositionAt)
+    import Map.ItemLoader(drawItems, createItems, drawSickFriend, hideItemIfOnTop)
+    import Map.Map (drawMap, tileToWorldPosition)
+    import Map.Map (worldToTilePosition)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
-    import Interface.Time (updateTime, drawTimer)
+    import Interface.Time (updateTime, drawTimer, drawPlayerPos)
+    -- import Player.Inventory ()
 
 
 
@@ -25,9 +27,14 @@ module World (startGame) where
 
 
     drawWorld ::   [Picture] ->     WorldData   -> Picture
-    drawWorld    otherImages          world       = pictures
+    drawWorld    otherImages          world       =
+        let 
+            (x, y) = (playerPosition world)
+            (xTile, yTile) = worldToTilePosition(x,y)
+        in pictures
         [
             drawMap,
+            drawPlayerPos (xTile, yTile),--delete afterwards
             drawItems  (worldItems world),
             drawTimer  (timer world),
             drawSickFriend (otherImages !! 0), -- 0 = sick friend image
@@ -41,31 +48,35 @@ module World (startGame) where
     initialState :: [GameItem] ->  WorldData
     initialState    items =     WorldData
         { timer = 0
-        , playerPosition = inLevelPositionAt (5,5)
+        , playerPosition = tileToWorldPosition (2,2)
         , isWPressed = False
         , isAPressed = False
         , isSPressed = False
         , isDPressed = False
         , playerLastDirection = DirectionLeft
         , worldItems = items
+        , inventory = 2
 
         }
 
     updateWorld :: Float -> WorldData -> WorldData
-    updateWorld    dt       world=
-        let worldAfterPlayerMoviment = updatePlayerMoviment dt world
-            worldAfterUpdateTime = updateTime dt worldAfterPlayerMoviment
-        in worldAfterUpdateTime
+    updateWorld dt world =
+        let w1 = updatePlayerMoviment dt world
+            w2 = updateTime dt w1
+            
+            updatedItems = hideItemIfOnTop (playerPosition w2) (worldItems w2)
+        in w2 { worldItems = updatedItems }
+        
 
     startGame :: [Picture] -> [Picture] -> IO()
     startGame  itemsImages otherImages =
         play
-            (InWindow "Lucy loves Gloss!"
+            (InWindow "Also try Terraria!"
                 (windowWidthInPixels, windowHeightInPixels)
                 (windowPositionLeft, windowPositionTop))
             backgroundColor
             fps
-            (initialState (loadItemImages itemsImages))
+            (initialState (createItems itemsImages))
             -- ( applyViewPortToPicture zoomedViewPort . 
             (drawWorld otherImages)
             -- )

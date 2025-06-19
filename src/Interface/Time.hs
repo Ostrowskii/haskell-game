@@ -1,7 +1,7 @@
-module Interface.Time (updateTime, drawTimer) where 
+module Interface.Time (updateTime, drawTimer, drawPlayerPos) where 
     
-    import Graphics.Gloss
-    import Types (WorldData(..))
+    import Graphics.Gloss ( Picture(Text, Translate, Scale) )
+    import Types (WorldData(..), Position, PositionInTiles)
 
     updateTime :: Float                     -> WorldData -> WorldData
     updateTime  secondsPassedSinceLastFrame world        = world {timer = (timer world) + secondsPassedSinceLastFrame}
@@ -23,4 +23,15 @@ module Interface.Time (updateTime, drawTimer) where
         sy = 0.1
 
 
-
+    drawPlayerPos :: PositionInTiles -> Picture 
+    drawPlayerPos   playerPos = 
+        let
+            (xPos, yPos) = playerPos
+            info =  "this: " ++ show xPos ++ " and y:"++ show yPos 
+        in Translate x y $ Scale sx sy $ Text  info
+        where 
+        x = -400
+        y = 100
+        sx = 0.1
+        sy = 0.1
+        
