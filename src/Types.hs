@@ -5,7 +5,12 @@ module Types (WorldData(..), Direction(..), GameItem(..), Position, PositionInTi
     type Position = (Float, Float)
     type PositionInTiles = (Int,Int)
 
-    data GameItem = GameItem Position Picture Bool
+    data GameItem = GameItem 
+        { itemPosition :: Position
+        , itemType     :: Int       --yorgut, ice cream
+        , itemImage    :: Picture
+        , itemVisible  :: Bool
+        }
 
 
     data WorldData = WorldData 

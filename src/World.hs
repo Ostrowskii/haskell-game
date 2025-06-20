@@ -11,11 +11,11 @@ module World (startGame) where
 
     import Player.Movement (handleInputMoviment, updatePlayerMoviment)
     import Player.Player (drawPlayer)
-    import Map.ItemLoader(drawItems, createItems, drawSickFriend, hideItemIfOnTop)
+    import Map.ItemLoader(drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend)
     import Map.Map (drawMap, tileToWorldPosition)
     import Map.Map (worldToTilePosition)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
-    import Interface.Time (updateTime, drawTimer, drawPlayerPos)
+    import Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItem)
     -- import Player.Inventory ()
 
 
@@ -35,9 +35,10 @@ module World (startGame) where
         [
             drawMap,
             drawPlayerPos (xTile, yTile),--delete afterwards
+            drawItem (inventory world), -- drawItem
             drawItems  (worldItems world),
             drawTimer  (timer world),
-            drawSickFriend (otherImages !! 0), -- 0 = sick friend image
+            drawSickFriend (otherImages !! 0) (otherImages !! 5), -- 0 = sick friend image
             drawPlayer (playerPosition world) [(otherImages !! 1), (otherImages !! 2), (otherImages !! 3), (otherImages !! 4)] (playerLastDirection world)
         ]
 
@@ -55,7 +56,7 @@ module World (startGame) where
         , isDPressed = False
         , playerLastDirection = DirectionLeft
         , worldItems = items
-        , inventory = 2
+        , inventory = 0
 
         }
 
@@ -63,10 +64,14 @@ module World (startGame) where
     updateWorld dt world =
         let w1 = updatePlayerMoviment dt world
             w2 = updateTime dt w1
-            
-            updatedItems = hideItemIfOnTop (playerPosition w2) (worldItems w2)
-        in w2 { worldItems = updatedItems }
-        
+            (updatedItems, maybeItemType) = hideItemIfOnTop (playerPosition w2) (inventory w2) (worldItems w2)
+            pickedUpInventory = case maybeItemType of
+                                Just newItemType -> newItemType
+                                Nothing -> inventory w2
+            finalInventory = giveItemToFriend (playerPosition w2) pickedUpInventory
+        in w2 { worldItems = updatedItems, inventory = finalInventory }
+
+    
 
     startGame :: [Picture] -> [Picture] -> IO()
     startGame  itemsImages otherImages =

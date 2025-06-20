@@ -6,7 +6,7 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition) where
     import Graphics.Gloss
     import Map.Block.RedBlock
     import Map.Block.BlueBlock
-    import Map.Block.Blocks (idBlocksWithColition)
+    import Map.Block.Blocks (idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt)
 
     tileSizeInPixel :: Int
     tileSizeInPixel = 32
@@ -20,24 +20,24 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition) where
     level =
 
         [ replicate 28 1
-        , [1] ++ replicate 8 0 ++ [1, 3] ++ replicate 7 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1, 3] ++ replicate 7 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        ,  replicate 4 1 ++ [0,0] ++ replicate 7 1 ++ [0,0] ++ replicate 7 1 ++ [0,0] ++ replicate 4 1
-        , [1] ++ replicate 26 0 ++ [1]
-        , [1] ++ replicate 26 0 ++ [1]
-        ,  replicate 4 1 ++ [0,0] ++ replicate 7 1 ++ [0,0] ++ replicate 7 1 ++ [0,0] ++ replicate 4 1
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
-        , [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1] ++ replicate 8 0 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1, 6, 5, 5] ++ replicate 5 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1, 6, 5, 5] ++ replicate 5 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1, 5, 5, 5] ++ replicate 5 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1, 5, 5, 5] ++ replicate 5 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        ,  replicate 4 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 4 1
+        , [1] ++ replicate 26 4 ++ [1]
+        , [1] ++ replicate 26 4 ++ [1]
+        ,  replicate 4 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 4 1
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
         , replicate 28 1
         ]
     
@@ -46,6 +46,9 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition) where
     tileToBlock     1       = redBlockAt
     tileToBlock     2       = blueBlockAt
     tileToBlock     3       = invisibleBlockAt
+    tileToBlock     5       = lightBlueBlockAt
+    tileToBlock     6       = lightBlueBlockAt
+    tileToBlock     4       = slightlyLighterBlueBlockAt
     tileToBlock     _       = \_ -> blank
 
     quantityLevelCol, quantityLevelRow :: Int 

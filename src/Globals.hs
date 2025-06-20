@@ -1,4 +1,5 @@
-module Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor) where
+module Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, 
+backgroundColor, jpgImagesStart) where
 
 
     import Graphics.Gloss
@@ -22,5 +23,6 @@ module Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, wi
     backgroundColor = white
     --game SETTINGS end
 
-
+    jpgImagesStart :: Int 
+    jpgImagesStart = 5
     
