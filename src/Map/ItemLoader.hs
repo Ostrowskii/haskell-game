@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use head" #-}
 module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead) where
 
     import Graphics.Gloss
@@ -13,9 +15,9 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
     createItems :: [Picture]  -> [GameItem]
     createItems   itemImages   =
         [
-            GameItem (tileToWorldPosition (3,2)) 2 (itemImages !! 2) True,
+            GameItem (tileToWorldPosition (13,2)) 1 (itemImages !! 1) True,
             GameItem (tileToWorldPosition (5,6)) 2 (itemImages !! 2) True,
-            GameItem (tileToWorldPosition (7,7)) 2 (itemImages !! 2) True,
+            GameItem (tileToWorldPosition (7,7)) 3 (itemImages !! 3) True,
             GameItem (tileToWorldPosition (4,4)) 2 (itemImages !! 2) True
         ]
 
@@ -50,7 +52,7 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
 
     drawItemOnHead :: Position -> Int -> [Picture] ->Picture
     drawItemOnHead      _           0   _ = Blank
-    drawItemOnHead    playerPosition idImage allImages = 
+    drawItemOnHead    playerPosition idImage allImages =
         let
             (x,y) = playerPosition
             y2 = y+40
@@ -58,20 +60,28 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
 
         in
         pictures [translate x y2 itemImage]
-    
+
     giveItemToFriend :: Position -> WorldData -> WorldData
     giveItemToFriend playerPosition world =
         let (col, row) = worldToTilePosition playerPosition
             inside = col >= 10 && col <= 12 && row >= 1 && row <= 4
-        in if inside
+        in if inside && (inventory world /= 0)
             then
-                let myinventory = inventory world
+                let myInventory = inventory world
                     happy = friendHappinessPercent world
                     health = friendHealthPercent world
-                    (totalHappiness, totalHealth) = if myinventory == 2 then (happy + 20, health + 5) else (happy, health)
-                in world { inventory = 0, friendHappinessPercent = totalHappiness, friendHealthPercent = totalHealth }
+                    (addingHappiness, addingHealth) = itemsValuesAtId myInventory
+                    -- (totalHappiness, totalHealth) = (happy + addingHappiness, health + addingHealth)
+                    -- (totalHappiness, totalHealth) = if myInventory == 2 then (happy + 20, health + 5) else (happy, health)
+                in world { inventory = 0, friendHappinessPercent = happy + addingHappiness, friendHealthPercent = health + addingHealth }
             else world
 
+    itemsValuesAtId :: Int -> (Int, Int)
+
+    itemsValuesAtId     1 = (20,5)
+    itemsValuesAtId     2 = (50,30)
+    itemsValuesAtId     3 = (50,30)
+    -- itemsValuesAtId     0 = (0,0)
 
 
     drawSickFriend :: Picture -> Picture ->  Picture
@@ -79,4 +89,3 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
         let (x,y) = tileToWorldPosition (2,10)
         --removi tapete
         in pictures [ translate x y friendImg]
- 

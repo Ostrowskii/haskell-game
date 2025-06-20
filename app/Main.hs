@@ -21,9 +21,11 @@ module Main where
   main :: IO ()
   main = do
     itemImages <- loadImages
-      [  "src/img/gutiguti.png"
-        ,"src/img/icecream.png"
+      [ 
+         "src/img/food1.png"
+        ,"src/img/food1.png"
         ,"src/img/yogurt.png"
+        , "src/img/food3.png"
       ]
     otherImagesPng <- loadImages 
       [   "src/img/sickfriendlonghair.png"
