@@ -1,7 +1,7 @@
-module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend) where
+module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead) where
 
     import Graphics.Gloss
-    import Types (GameItem(..), WorldData, Position)
+    import Types (GameItem(..), WorldData (playerPosition), Position)
 
     import Map.Map (tileToWorldPosition, tileSizeInPixel, worldToTilePosition)
 
@@ -20,22 +20,48 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
         ]
 
     -- study this function again in the fututre. it is a function inside a function
+    --TODO: make player box collider smaller
     hideItemIfOnTop :: Position -> Int -> [GameItem] -> ([GameItem], Maybe Int)
     hideItemIfOnTop playerPosition currentInventory items =
         let
-            (x,y) = playerPosition
-            playerTilePos = worldToTilePosition (x,y)
-            playerTilePosB = worldToTilePosition (x,y-32)
-            playerTilePosR = worldToTilePosition (x+32,y)
-            playerTilePosRB = worldToTilePosition (x+32,y-32)
+            (x, y) = playerPosition
+            playerTilePos  = worldToTilePosition (x, y)
+            playerTilePosB = worldToTilePosition (x, y - 32)
+            playerTilePosR = worldToTilePosition (x + 32, y)
+            playerTilePosRB = worldToTilePosition (x + 32, y - 32)
+
+            isTouchingItem tilePos =
+                tilePos == playerTilePos  ||
+                tilePos == playerTilePosB ||
+                tilePos == playerTilePosR ||
+                tilePos == playerTilePosRB
 
             processItem (GameItem pos itemId pic visible) (acc, pickedUp)
-                | currentInventory /= 0 = (acc ++ [GameItem pos itemId pic visible], Nothing) -- já tem item
-                | worldToTilePosition pos == playerTilePos && visible =
-                    (acc ++ [GameItem pos itemId pic False], Just itemId) -- coleta item
-                | otherwise =
-                    (acc ++ [GameItem pos itemId pic visible], pickedUp) -- mantém como está
+                | currentInventory /= 0 = (acc ++ [GameItem pos itemId pic visible], Nothing)
+                | isTouchingItem (worldToTilePosition pos) && visible =
+                    (acc ++ [GameItem pos itemId pic False], Just itemId)
+                | otherwise = (acc ++ [GameItem pos itemId pic visible], pickedUp)
+
         in foldr processItem ([], Nothing) items
+
+
+
+
+
+    drawItemOnHead :: Position -> Int -> [Picture] ->Picture
+    drawItemOnHead      _           0   _ = Blank
+    drawItemOnHead    playerPosition idImage allImages = 
+        let
+            (x,y) = playerPosition
+            y2 = y+40
+            itemImage = allImages !! idImage
+
+        in
+        pictures [translate x y2 itemImage]
+    
+
+    -- getImageById :: Int -> [Picture] -> Picture
+    -- getImageById    idImage      allImages = images !! id
 
     giveItemToFriend :: Position -> Int -> Int
     giveItemToFriend playerPosition currentInventory =
@@ -51,6 +77,13 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
         --removi tapete
         in pictures [ translate x y friendImg]
  
+
+
+    --         drawItemQuantity:: Position -> Picture -> Picture 
+    -- drawItemQuantity  playerPosition itemImage = 
+    --     let
+    --         info =  "itemInInventory: " ++ show idItem
+    --     in Translate x y $ Scale sx sy $ Text  info
     --made by accident but very interesting
     -- temporarilyHideIfOnTop :: Position -> [GameItem] -> [GameItem]
     -- temporarilyHideIfOnTop playerPosition items =

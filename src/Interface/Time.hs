@@ -1,4 +1,4 @@
-module Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItem) where 
+module Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItemQuantity) where 
     
     import Graphics.Gloss ( Picture(Text, Translate, Scale) )
     import Types (WorldData(..), Position, PositionInTiles)
@@ -35,8 +35,8 @@ module Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItem) where
         sx = 0.1
         sy = 0.1
         
-    drawItem :: Int -> Picture 
-    drawItem   idItem = 
+    drawItemQuantity:: Int -> Picture 
+    drawItemQuantity  idItem = 
         let
             info =  "itemInInventory: " ++ show idItem
         in Translate x y $ Scale sx sy $ Text  info

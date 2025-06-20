@@ -11,11 +11,10 @@ module World (startGame) where
 
     import Player.Movement (handleInputMoviment, updatePlayerMoviment)
     import Player.Player (drawPlayer)
-    import Map.ItemLoader(drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend)
-    import Map.Map (drawMap, tileToWorldPosition)
-    import Map.Map (worldToTilePosition)
+    import Map.ItemLoader(drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead)
+    import Map.Map (drawMap, tileToWorldPosition, worldToTilePosition)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
-    import Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItem)
+    import Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItemQuantity)
     -- import Player.Inventory ()
 
 
@@ -26,8 +25,8 @@ module World (startGame) where
     zoomedViewPort = ViewPort { viewPortTranslate = (0, 0), viewPortRotate = 0, viewPortScale = 1.2 } 
 
 
-    drawWorld ::   [Picture] ->     WorldData   -> Picture
-    drawWorld    otherImages          world       =
+    drawWorld ::   [Picture] -> [Picture] ->     WorldData   -> Picture
+    drawWorld       itemsImages otherImages          world       =
         let 
             (x, y) = (playerPosition world)
             (xTile, yTile) = worldToTilePosition(x,y)
@@ -35,11 +34,13 @@ module World (startGame) where
         [
             drawMap,
             drawPlayerPos (xTile, yTile),--delete afterwards
-            drawItem (inventory world), -- drawItem
+            drawItemQuantity (inventory world), -- delete afterwards
+
             drawItems  (worldItems world),
             drawTimer  (timer world),
             drawSickFriend (otherImages !! 0) (otherImages !! 5), -- 0 = sick friend image
-            drawPlayer (playerPosition world) [(otherImages !! 1), (otherImages !! 2), (otherImages !! 3), (otherImages !! 4)] (playerLastDirection world)
+            drawPlayer (playerPosition world) [(otherImages !! 1), (otherImages !! 2), (otherImages !! 3), (otherImages !! 4)] (playerLastDirection world),
+            drawItemOnHead  (playerPosition world) (inventory world) itemsImages
         ]
 
     handleInput :: Event -> WorldData -> WorldData
@@ -83,7 +84,7 @@ module World (startGame) where
             fps
             (initialState (createItems itemsImages))
             -- ( applyViewPortToPicture zoomedViewPort . 
-            (drawWorld otherImages)
+            (drawWorld itemsImages otherImages)
             -- )
             handleInput
             updateWorld
