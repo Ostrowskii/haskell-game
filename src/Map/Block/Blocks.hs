@@ -1,4 +1,4 @@
-module Map.Block.Blocks (blockSize, idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt) where
+module Map.Block.Blocks (blockSize, idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt, redBlockAt, invisibleBlockAt, blueBlockAt) where
 
 
     import Graphics.Gloss
@@ -12,6 +12,15 @@ module Map.Block.Blocks (blockSize, idBlocksWithColition, lightBlueBlockAt, slig
             3, 2, 1, 6
         ]
     
+    redBlockAt :: (Float, Float) -> Picture 
+    redBlockAt (x,y) = translate x y (color red (rectangleSolid blockSize blockSize))
+
+    invisibleBlockAt :: (Float, Float) -> Picture 
+    invisibleBlockAt    (x,y) = translate x y (color (makeColor 1 1 1 0) (rectangleSolid blockSize blockSize))
+
+    blueBlockAt :: (Float, Float) -> Picture 
+    blueBlockAt (x,y) = translate x y (color blue (rectangleSolid blockSize blockSize))
+
 
     slightlyLighterBlueBlockAt :: (Float, Float) -> Picture 
     slightlyLighterBlueBlockAt (x, y) =  

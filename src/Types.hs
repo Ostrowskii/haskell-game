@@ -23,6 +23,8 @@ module Types (WorldData(..), Direction(..), GameItem(..), Position, PositionInTi
         , playerLastDirection :: Direction
         , worldItems :: [GameItem]
         , inventory :: Int 
+        , friendHealthPercent :: Int
+        , friendHappinessPercent :: Int
         }
 
     data Direction = DirectionUp | DirectionDown | DirectionLeft | DirectionRight deriving (Eq, Show)

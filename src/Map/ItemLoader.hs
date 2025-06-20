@@ -1,7 +1,7 @@
 module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead) where
 
     import Graphics.Gloss
-    import Types (GameItem(..), WorldData (playerPosition), Position)
+    import Types (GameItem(..), WorldData (..), Position)
 
     import Map.Map (tileToWorldPosition, tileSizeInPixel, worldToTilePosition)
 
@@ -59,11 +59,18 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
         in
         pictures [translate x y2 itemImage]
     
-    giveItemToFriend :: Position -> Int -> Int
-    giveItemToFriend playerPosition currentInventory =
+    giveItemToFriend :: Position -> WorldData -> WorldData
+    giveItemToFriend playerPosition world =
         let (col, row) = worldToTilePosition playerPosition
             inside = col >= 10 && col <= 12 && row >= 1 && row <= 4
-        in if inside then 0 else currentInventory
+        in if inside
+            then
+                let myinventory = inventory world
+                    happy = friendHappinessPercent world
+                    health = friendHealthPercent world
+                    (totalHappiness, totalHealth) = if myinventory == 2 then (happy + 20, health + 5) else (happy, health)
+                in world { inventory = 0, friendHappinessPercent = totalHappiness, friendHealthPercent = totalHealth }
+            else world
 
 
 

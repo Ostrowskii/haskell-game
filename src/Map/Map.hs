@@ -4,9 +4,7 @@ module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt,
 tileToWorldPosition, tileSizeInPixel, worldToTilePosition) where
 
     import Graphics.Gloss
-    import Map.Block.RedBlock
-    import Map.Block.BlueBlock
-    import Map.Block.Blocks (idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt)
+    import Map.Block.Blocks (idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt, blueBlockAt, redBlockAt, invisibleBlockAt)
 
     tileSizeInPixel :: Int
     tileSizeInPixel = 32

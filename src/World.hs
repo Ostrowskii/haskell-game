@@ -14,7 +14,7 @@ module World (startGame) where
     import Map.ItemLoader(drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead)
     import Map.Map (drawMap, tileToWorldPosition, worldToTilePosition)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
-    import Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItemQuantity)
+    import Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItemQuantity, drawInterface)
    
 
 
@@ -35,6 +35,7 @@ module World (startGame) where
             drawMap,
             drawPlayerPos (xTile, yTile),--delete afterwards
             drawItemQuantity (inventory world), -- delete afterwards
+            drawInterface world, --delete?
 
             drawItems  (worldItems world),
             drawTimer  (timer world),
@@ -58,19 +59,25 @@ module World (startGame) where
         , playerLastDirection = DirectionLeft
         , worldItems = items
         , inventory = 0
-
+        , friendHealthPercent = 50
+        , friendHappinessPercent = 20
         }
 
     updateWorld :: Float -> WorldData -> WorldData
     updateWorld dt world =
         let w1 = updatePlayerMoviment dt world
             w2 = updateTime dt w1
+
             (updatedItems, maybeItemType) = hideItemIfOnTop (playerPosition w2) (inventory w2) (worldItems w2)
             pickedUpInventory = case maybeItemType of
                                 Just newItemType -> newItemType
                                 Nothing -> inventory w2
-            finalInventory = giveItemToFriend (playerPosition w2) pickedUpInventory
-        in w2 { worldItems = updatedItems, inventory = finalInventory }
+
+            w3 = w2 { worldItems = updatedItems, inventory = pickedUpInventory }
+
+            w4 = giveItemToFriend (playerPosition w3) w3
+
+        in w4
 
     
 
