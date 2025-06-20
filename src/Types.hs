@@ -22,7 +22,7 @@ module Types (WorldData(..), Direction(..), GameItem(..), Position, PositionInTi
         , isDPressed :: Bool 
         , playerLastDirection :: Direction
         , worldItems :: [GameItem]
-        , inventory :: Int --item id that is in our inventory
+        , inventory :: Int 
         }
 
     data Direction = DirectionUp | DirectionDown | DirectionLeft | DirectionRight deriving (Eq, Show)

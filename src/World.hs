@@ -15,7 +15,7 @@ module World (startGame) where
     import Map.Map (drawMap, tileToWorldPosition, worldToTilePosition)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
     import Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItemQuantity)
-    -- import Player.Inventory ()
+   
 
 
 
@@ -83,8 +83,6 @@ module World (startGame) where
             backgroundColor
             fps
             (initialState (createItems itemsImages))
-            -- ( applyViewPortToPicture zoomedViewPort . 
             (drawWorld itemsImages otherImages)
-            -- )
             handleInput
             updateWorld

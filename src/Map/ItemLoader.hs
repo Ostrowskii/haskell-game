@@ -59,10 +59,6 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
         in
         pictures [translate x y2 itemImage]
     
-
-    -- getImageById :: Int -> [Picture] -> Picture
-    -- getImageById    idImage      allImages = images !! id
-
     giveItemToFriend :: Position -> Int -> Int
     giveItemToFriend playerPosition currentInventory =
         let (col, row) = worldToTilePosition playerPosition
@@ -77,21 +73,3 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
         --removi tapete
         in pictures [ translate x y friendImg]
  
-
-
-    --         drawItemQuantity:: Position -> Picture -> Picture 
-    -- drawItemQuantity  playerPosition itemImage = 
-    --     let
-    --         info =  "itemInInventory: " ++ show idItem
-    --     in Translate x y $ Scale sx sy $ Text  info
-    --made by accident but very interesting
-    -- temporarilyHideIfOnTop :: Position -> [GameItem] -> [GameItem]
-    -- temporarilyHideIfOnTop playerPosition items =
-    --     let
-    --         playerTilePos = worldToTilePosition playerPosition
-    --         hideIfSamePos (GameItem pos pic _) =
-    --             let itemTilePos = worldToTilePosition pos
-    --             in if itemTilePos == playerTilePos
-    --                 then GameItem pos pic False
-    --                 else GameItem pos pic True
-    --     in map hideIfSamePos items
