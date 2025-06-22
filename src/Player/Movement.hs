@@ -17,6 +17,10 @@ module Player.Movement (handleInputMoviment, updatePlayerMoviment) where
     -- if 3 diagonal speed = 2.12132
     playerDiagonalSpeed = 2.12132
 
+    -- playerDiagonalSpeed :: Float -> Float
+    -- playerDiagonalSpeed playerStraightSpeed = playerStraightSpeed * sqrt 2.0
+
+
     stopAreaBetweenWallAndPlayer :: Float
     stopAreaBetweenWallAndPlayer = 0.0001
 

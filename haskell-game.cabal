@@ -56,10 +56,10 @@ common warnings
 library
   hs-source-dirs:      src
   exposed-modules:      World, Types, Globals, 
-                        Map.Map, Map.ItemLoader, Map.Block.Blocks, 
+                        Map.Map, Map.ItemLoader, Map.Block.Blocks, Map.Block.Decoration,
                         Player.Movement, Player.Player, Player.Inventory,
                         Interface.Time
-  build-depends:       base >=4.7 && <5, gloss, gloss-juicy
+  build-depends:       random ^>=1.2.1.3, base >=4.7 && <5, gloss, gloss-juicy,
   default-language:    Haskell2010
 
 executable haskell-game
@@ -79,7 +79,8 @@ executable haskell-game
     build-depends:    base ^>=4.17.2.1, 
                     gloss,
                     gloss-juicy,
-                    haskell-game
+                    haskell-game,
+                    
     -- Directories containing source files.
     hs-source-dirs:   app
 

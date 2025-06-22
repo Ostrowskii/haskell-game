@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Move guards forward" #-}
 module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt, 
-tileToWorldPosition, tileSizeInPixel, worldToTilePosition) where
+tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions) where
 
     import Graphics.Gloss
     import Map.Block.Blocks (idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt, blueBlockAt, redBlockAt, invisibleBlockAt)
@@ -18,13 +18,13 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition) where
     level =
 
         [ replicate 28 1
-        , [1] ++ replicate 8 4 ++ [1, 6, 5, 5] ++ replicate 5 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1, 6, 5, 5] ++ replicate 5 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1, 5, 5, 5] ++ replicate 5 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1, 5, 5, 5] ++ replicate 5 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1, 6, 5, 5] ++ replicate 5 7 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1, 6, 5, 5] ++ replicate 5 7 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1, 5, 5, 5] ++ replicate 5 7 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1, 5, 5, 5] ++ replicate 5 7 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 7 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 7 ++ [1] ++ replicate 8 4 ++ [1]
+        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 7 ++ [1] ++ replicate 8 4 ++ [1]
         ,  replicate 4 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 4 1
         , [1] ++ replicate 26 4 ++ [1]
         , [1] ++ replicate 26 4 ++ [1]
@@ -44,9 +44,10 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition) where
     tileToBlock     1       = redBlockAt
     tileToBlock     2       = blueBlockAt
     tileToBlock     3       = invisibleBlockAt
+    tileToBlock     4       = slightlyLighterBlueBlockAt --itens can spawn
     tileToBlock     5       = lightBlueBlockAt
-    tileToBlock     6       = lightBlueBlockAt
-    tileToBlock     4       = slightlyLighterBlueBlockAt
+    tileToBlock     6       = lightBlueBlockAt --with colision
+    tileToBlock     7       = slightlyLighterBlueBlockAt
     tileToBlock     _       = \_ -> blank
 
     quantityLevelCol, quantityLevelRow :: Int 
@@ -61,6 +62,21 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition) where
             , let x = fromIntegral (colIndex * tileSizeInPixel) - xMapCenteringValue
             , let y = fromIntegral (-(rowIndex * tileSizeInPixel)) + yMapCenteringValue
             ]
+
+    -- can i spawn an item??
+
+    tilesThatItensCanSpawn :: [(Int, Int)]
+    tilesThatItensCanSpawn =
+        [ (rowIdx, colIdx)
+        | (rowIdx, row) <- zip [0..] level
+        , (colIdx, tile) <- zip [0..] row
+        , tile == 4
+        ]
+    
+    spawnPositions :: [(Float, Float)]
+    spawnPositions = map tileToWorldPosition tilesThatItensCanSpawn
+
+
 
     -- is block solid????
 

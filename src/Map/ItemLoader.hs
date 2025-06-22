@@ -1,28 +1,54 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use head" #-}
-module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead, pickUpItemIfOnTop) where
+module Map.ItemLoader (drawItems, hideItemIfOnTop, pickUpItemIfOnTop, createRandomItems) where
 
     import Graphics.Gloss
     import Types (GameItem(..), WorldData (..), Position)
+    import System.Random (randomRIO)
 
-    import Map.Map (tileToWorldPosition, tileSizeInPixel, worldToTilePosition)
+    import Map.Map (tileToWorldPosition, worldToTilePosition, spawnPositions)
+
+
 
     drawItems :: [GameItem] -> Picture
     drawItems    itemsGame = pictures [translate x y pic | GameItem (x, y) _ pic True <- itemsGame]
 
 
+
+
+
+    createRandomItems :: [Picture] -> IO [GameItem]
+    createRandomItems itemImages = do
+        let availablePositions = spawnPositions
+            numberOfTypes = length itemImages - 1
+
+        mapM (createRandomItem itemImages numberOfTypes) availablePositions
+
+
+    createRandomItem :: [Picture] -> Int -> Position -> IO GameItem
+    createRandomItem itemImages maxType pos = do
+        itemTypeId <- randomRIO (0, maxType)
+        let itemPic = itemImages !! itemTypeId
+        return $ GameItem pos itemTypeId itemPic True
+
+
+
+
     --never put an item close to another item. the 8 blocks around should be empty. walls are ok
-    createItems :: [Picture]  -> [GameItem]
-    createItems   itemImages   =
-        [
-            GameItem (tileToWorldPosition (13,2)) 1 (itemImages !! 1) True,
-            GameItem (tileToWorldPosition (5,6)) 2 (itemImages !! 2) True,
-            GameItem (tileToWorldPosition (7,7)) 3 (itemImages !! 3) True,
-            GameItem (tileToWorldPosition (4,4)) 2 (itemImages !! 2) True
-        ]
+    --old creat items
+    -- createItems :: [Picture]  -> [GameItem]
+    -- createItems   itemImages   =
+    --     [
+    --         GameItem (tileToWorldPosition (13,2)) 1 (itemImages !! 1) True,
+    --         GameItem (tileToWorldPosition (14,2)) 2 (itemImages !! 2) True,
+    --         GameItem (tileToWorldPosition (14,3)) 3 (itemImages !! 3) True,
+    --         GameItem (tileToWorldPosition (5,6)) 2 (itemImages !! 2) True,
+    --         GameItem (tileToWorldPosition (7,7)) 3 (itemImages !! 3) True,
+    --         GameItem (tileToWorldPosition (4,4)) 2 (itemImages !! 2) True
+    --     ]
 
 
---get the item
+    --get the item
     pickUpItemIfOnTop :: WorldData -> WorldData
     pickUpItemIfOnTop world =
         let (updatedItems, maybeItemType) = hideItemIfOnTop (playerPosition world) (inventory world) (worldItems world)
@@ -57,42 +83,3 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
         in foldr processItem ([], Nothing) items
 
 
-    drawItemOnHead :: Position -> Int -> [Picture] ->Picture
-    drawItemOnHead      _           0   _ = Blank
-    drawItemOnHead    playerPosition idImage allImages =
-        let
-            (x,y) = playerPosition
-            y2 = y+40
-            itemImage = allImages !! idImage
-
-        in
-        pictures [translate x y2 itemImage]
-
-
---use the item
-    giveItemToFriend :: WorldData -> WorldData
-    giveItemToFriend    world =
-        let (col, row) = worldToTilePosition (playerPosition world)
-            inside = col >= 10 && col <= 12 && row >= 1 && row <= 4
-        in if inside && (inventory world /= 0)
-            then
-                let myInventory = inventory world
-                    happy = friendHappinessPercent world
-                    health = friendHealthPercent world
-                    (addingHappiness, addingHealth) = itemsValuesAtId myInventory
-                    -- (totalHappiness, totalHealth) = (happy + addingHappiness, health + addingHealth)
-                    -- (totalHappiness, totalHealth) = if myInventory == 2 then (happy + 20, health + 5) else (happy, health)
-                in world { inventory = 0, friendHappinessPercent = happy + addingHappiness, friendHealthPercent = health + addingHealth }
-            else world
-
-    itemsValuesAtId :: Int -> (Float, Float)
-    itemsValuesAtId     1 = (20,5)
-    itemsValuesAtId     2 = (50,30)
-    itemsValuesAtId     3 = (50,30)
-
-
-    drawSickFriend :: Picture -> Picture ->  Picture
-    drawSickFriend friendImg rugImg =
-        let (x,y) = tileToWorldPosition (2,10)
-        --removi tapete
-        in pictures [ translate x y friendImg]

@@ -11,8 +11,10 @@ module World (startGame) where
 
     import Player.Movement (handleInputMoviment, updatePlayerMoviment)
     import Player.Player (drawPlayer)
-    import Map.ItemLoader(drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead, pickUpItemIfOnTop)
+    import Player.Inventory (giveItemToFriend, drawItemOnHead, handleResetInventory)
     import Map.Map (drawMap, tileToWorldPosition, worldToTilePosition)
+    import Map.ItemLoader(drawItems, hideItemIfOnTop, pickUpItemIfOnTop, createRandomItems)
+    import Map.Block.Decoration(drawSickFriend)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
     import Interface.Time (updateTime, drawInterfaces)
 
@@ -30,8 +32,15 @@ module World (startGame) where
             drawItemOnHead  (playerPosition world) (inventory world) itemsImages
         ]
 
+    -- handleInput :: Event -> WorldData -> WorldData
+    -- handleInput = handleInputMoviment
+
+
     handleInput :: Event -> WorldData -> WorldData
-    handleInput = handleInputMoviment
+    handleInput event world =
+        let worldAfterMove = handleInputMoviment event world
+        in handleResetInventory event worldAfterMove
+
 
     initialState :: [GameItem] ->  WorldData
     initialState    items =     WorldData
@@ -59,18 +68,21 @@ module World (startGame) where
         in w5
 
 
-    startGame :: [Picture] -> [Picture] -> IO()
-    startGame  itemsImages otherImages =
+    startGame :: [Picture] -> [Picture] -> IO ()
+    startGame itemsImages otherImages = do
+        items <- createRandomItems itemsImages
+        let initial = initialState items
         play
             (InWindow "Also try Terraria!"
                 (windowWidthInPixels, windowHeightInPixels)
                 (windowPositionLeft, windowPositionTop))
             backgroundColor
             fps
-            (initialState (createItems itemsImages))
+            initial
             (drawWorld itemsImages otherImages)
             handleInput
             updateWorld
+
 
 
     updateFriendNeeds :: Float -> WorldData -> WorldData
