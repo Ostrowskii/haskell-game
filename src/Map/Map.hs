@@ -1,7 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Move guards forward" #-}
 module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt, 
-tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions) where
+tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions, tilesThatItensCanSpawn) where
 
     import Graphics.Gloss
     import Map.Block.Blocks (idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt, blueBlockAt, redBlockAt, invisibleBlockAt)

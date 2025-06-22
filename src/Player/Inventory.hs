@@ -36,9 +36,9 @@
             else world
 
     itemsValuesAtId :: Int -> (Float, Float)
-    itemsValuesAtId     1 = (20,5)
-    itemsValuesAtId     2 = (50,30)
-    itemsValuesAtId     3 = (50,30)
+    itemsValuesAtId     1 = (10,10)
+    itemsValuesAtId     2 = (20,20)
+    itemsValuesAtId     3 = (30,30)
 
 
 

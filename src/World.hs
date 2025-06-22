@@ -6,6 +6,9 @@ module World (startGame) where
     import Graphics.Gloss
     import Graphics.Gloss.Interface.Pure.Game
     import Graphics.Gloss.Juicy (loadJuicyPNG)
+    import System.Random (StdGen, split, mkStdGen, randomRIO, RandomGen, randomRs, randomR)
+
+
 
     import Types (WorldData(..), Direction(..), GameItem(..))
 
@@ -13,7 +16,7 @@ module World (startGame) where
     import Player.Player (drawPlayer)
     import Player.Inventory (giveItemToFriend, drawItemOnHead, handleResetInventory)
     import Map.Map (drawMap, tileToWorldPosition, worldToTilePosition)
-    import Map.ItemLoader(drawItems, hideItemIfOnTop, pickUpItemIfOnTop, createRandomItems)
+    import Map.ItemLoader(drawItems, hideItemIfOnTop, pickUpItemIfOnTop, createRandomItems, maybeSpawnNewItem)
     import Map.Block.Decoration(drawSickFriend)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
     import Interface.Time (updateTime, drawInterfaces)
@@ -57,21 +60,22 @@ module World (startGame) where
         , friendHappinessPercent = 20
         }
 
-    updateWorld :: Float -> WorldData -> WorldData
-    updateWorld dt world =
+    updateWorld :: [Picture] -> Float  -> WorldData -> WorldData
+    updateWorld itemsImages dt world =
         let w1 = updatePlayerMoviment dt world
             w2 = updateTime dt w1
             w3 = pickUpItemIfOnTop w2
             w4 = giveItemToFriend w3
             w5 = updateFriendNeeds dt w4
-
-        in w5
+            w6 = maybeSpawnNewItem dt itemsImages w5
+        in w6
 
 
     startGame :: [Picture] -> [Picture] -> IO ()
-    startGame itemsImages otherImages = do
-        items <- createRandomItems itemsImages
-        let initial = initialState items
+    startGame itemImages otherImages = do
+        let gen = mkStdGen 42
+            (initialItems, _) = createRandomItems itemImages [] gen 6
+            initial = initialState initialItems
         play
             (InWindow "Also try Terraria!"
                 (windowWidthInPixels, windowHeightInPixels)
@@ -79,10 +83,9 @@ module World (startGame) where
             backgroundColor
             fps
             initial
-            (drawWorld itemsImages otherImages)
+            (drawWorld itemImages otherImages)
             handleInput
-            updateWorld
-
+            (updateWorld itemImages)
 
 
     updateFriendNeeds :: Float -> WorldData -> WorldData
