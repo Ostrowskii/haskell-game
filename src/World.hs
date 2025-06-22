@@ -11,34 +11,20 @@ module World (startGame) where
 
     import Player.Movement (handleInputMoviment, updatePlayerMoviment)
     import Player.Player (drawPlayer)
-    import Map.ItemLoader(drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead)
+    import Map.ItemLoader(drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead, pickUpItemIfOnTop)
     import Map.Map (drawMap, tileToWorldPosition, worldToTilePosition)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
-    import Interface.Time (updateTime, drawTimer, drawPlayerPos, drawItemQuantity, drawInterface)
-   
-
-
-
-    import Graphics.Gloss.Data.ViewPort
-
-    zoomedViewPort :: ViewPort
-    zoomedViewPort = ViewPort { viewPortTranslate = (0, 0), viewPortRotate = 0, viewPortScale = 1.2 } 
+    import Interface.Time (updateTime, drawInterfaces)
 
 
     drawWorld ::   [Picture] -> [Picture] ->     WorldData   -> Picture
     drawWorld       itemsImages otherImages          world       =
-        let 
-            (x, y) = (playerPosition world)
-            (xTile, yTile) = worldToTilePosition(x,y)
-        in pictures
+
+        pictures
         [
             drawMap,
-            drawPlayerPos (xTile, yTile),--delete afterwards
-            drawItemQuantity (inventory world), -- delete afterwards
-            drawInterface world, --delete?
-
+            drawInterfaces world,
             drawItems  (worldItems world),
-            drawTimer  (timer world),
             drawSickFriend (otherImages !! 0) (otherImages !! 5), -- 0 = sick friend image
             drawPlayer (playerPosition world) [(otherImages !! 1), (otherImages !! 2), (otherImages !! 3), (otherImages !! 4)] (playerLastDirection world),
             drawItemOnHead  (playerPosition world) (inventory world) itemsImages
@@ -46,7 +32,6 @@ module World (startGame) where
 
     handleInput :: Event -> WorldData -> WorldData
     handleInput = handleInputMoviment
-
 
     initialState :: [GameItem] ->  WorldData
     initialState    items =     WorldData
@@ -67,19 +52,12 @@ module World (startGame) where
     updateWorld dt world =
         let w1 = updatePlayerMoviment dt world
             w2 = updateTime dt w1
+            w3 = pickUpItemIfOnTop w2
+            w4 = giveItemToFriend w3
+            w5 = updateFriendNeeds dt w4
 
-            (updatedItems, maybeItemType) = hideItemIfOnTop (playerPosition w2) (inventory w2) (worldItems w2)
-            pickedUpInventory = case maybeItemType of
-                                Just newItemType -> newItemType
-                                Nothing -> inventory w2
+        in w5
 
-            w3 = w2 { worldItems = updatedItems, inventory = pickedUpInventory }
-
-            w4 = giveItemToFriend (playerPosition w3) w3
-
-        in w4
-
-    
 
     startGame :: [Picture] -> [Picture] -> IO()
     startGame  itemsImages otherImages =
@@ -93,3 +71,21 @@ module World (startGame) where
             (drawWorld itemsImages otherImages)
             handleInput
             updateWorld
+
+
+    updateFriendNeeds :: Float -> WorldData -> WorldData
+    updateFriendNeeds dt world =
+        let
+            happinessLossRate = 1.0 
+            healthLossRate = 0.5   
+
+            newHappiness = max 0 (friendHappinessPercent world - dt * happinessLossRate)
+            newHealth = max 0 (friendHealthPercent world - dt * healthLossRate)
+        in
+            world
+                { friendHappinessPercent = newHappiness
+                , friendHealthPercent = newHealth
+                }
+
+
+

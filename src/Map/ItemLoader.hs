@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use head" #-}
-module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead) where
+module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, giveItemToFriend, drawItemOnHead, pickUpItemIfOnTop) where
 
     import Graphics.Gloss
     import Types (GameItem(..), WorldData (..), Position)
@@ -20,6 +20,16 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
             GameItem (tileToWorldPosition (7,7)) 3 (itemImages !! 3) True,
             GameItem (tileToWorldPosition (4,4)) 2 (itemImages !! 2) True
         ]
+
+
+--get the item
+    pickUpItemIfOnTop :: WorldData -> WorldData
+    pickUpItemIfOnTop world =
+        let (updatedItems, maybeItemType) = hideItemIfOnTop (playerPosition world) (inventory world) (worldItems world)
+            pickedUpInventory = case maybeItemType of
+                                Just newItemType -> newItemType
+                                Nothing -> inventory world
+        in world { worldItems = updatedItems, inventory = pickedUpInventory }
 
     -- study this function again in the fututre. it is a function inside a function
     --TODO: make player box collider smaller
@@ -47,9 +57,6 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
         in foldr processItem ([], Nothing) items
 
 
-
-
-
     drawItemOnHead :: Position -> Int -> [Picture] ->Picture
     drawItemOnHead      _           0   _ = Blank
     drawItemOnHead    playerPosition idImage allImages =
@@ -61,9 +68,11 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
         in
         pictures [translate x y2 itemImage]
 
-    giveItemToFriend :: Position -> WorldData -> WorldData
-    giveItemToFriend playerPosition world =
-        let (col, row) = worldToTilePosition playerPosition
+
+--use the item
+    giveItemToFriend :: WorldData -> WorldData
+    giveItemToFriend    world =
+        let (col, row) = worldToTilePosition (playerPosition world)
             inside = col >= 10 && col <= 12 && row >= 1 && row <= 4
         in if inside && (inventory world /= 0)
             then
@@ -76,12 +85,10 @@ module Map.ItemLoader (drawItems, createItems, drawSickFriend, hideItemIfOnTop, 
                 in world { inventory = 0, friendHappinessPercent = happy + addingHappiness, friendHealthPercent = health + addingHealth }
             else world
 
-    itemsValuesAtId :: Int -> (Int, Int)
-
+    itemsValuesAtId :: Int -> (Float, Float)
     itemsValuesAtId     1 = (20,5)
     itemsValuesAtId     2 = (50,30)
     itemsValuesAtId     3 = (50,30)
-    -- itemsValuesAtId     0 = (0,0)
 
 
     drawSickFriend :: Picture -> Picture ->  Picture

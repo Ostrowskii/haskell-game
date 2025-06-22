@@ -2,6 +2,7 @@ module Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, wi
 backgroundColor, jpgImagesStart) where
 
 
+    import Graphics.Gloss.Data.ViewPort
     import Graphics.Gloss
 
 
@@ -20,9 +21,13 @@ backgroundColor, jpgImagesStart) where
     fps = 60
 
     backgroundColor :: Color
-    backgroundColor = white
+    backgroundColor = black
     --game SETTINGS end
 
     jpgImagesStart :: Int 
     jpgImagesStart = 5
     
+
+    --this is usefull
+    zoomedViewPort :: ViewPort
+    zoomedViewPort = ViewPort { viewPortTranslate = (0, 0), viewPortRotate = 0, viewPortScale = 1.2 } 
