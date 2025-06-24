@@ -1,7 +1,8 @@
 module Types (WorldData(..), Direction(..), GameItem(..), Position, PositionInTiles) where 
 
     import Graphics.Gloss (Picture)
-
+    import System.Random (StdGen)
+    
     type Position = (Float, Float)
     type PositionInTiles = (Int,Int)
 
@@ -15,6 +16,7 @@ module Types (WorldData(..), Direction(..), GameItem(..), Position, PositionInTi
 
     data WorldData = WorldData 
         { timer :: Float 
+        , itemSpawnTime :: Float
         , playerPosition :: (Float, Float)  
         , isWPressed :: Bool 
         , isAPressed :: Bool 
@@ -25,6 +27,7 @@ module Types (WorldData(..), Direction(..), GameItem(..), Position, PositionInTi
         , inventory :: Int 
         , friendHealthPercent :: Float
         , friendHappinessPercent :: Float
+        , rng :: StdGen --change later?
         }
 
     data Direction = DirectionUp | DirectionDown | DirectionLeft | DirectionRight deriving (Eq, Show)

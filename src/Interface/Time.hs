@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant bracket" #-}
 module Interface.Time (updateTime, drawInterfaces) where
 
     import Graphics.Gloss ( Picture(Text, Translate, Scale), pictures )
@@ -7,7 +9,9 @@ module Interface.Time (updateTime, drawInterfaces) where
     import Map.Map (worldToTilePosition)
 
     updateTime :: Float                     -> WorldData -> WorldData
-    updateTime  secondsPassedSinceLastFrame world        = world {timer = (timer world) + secondsPassedSinceLastFrame}
+    updateTime  secondsPassedSinceLastFrame world        = 
+        world {timer = (timer world) + secondsPassedSinceLastFrame, 
+                itemSpawnTime = (itemSpawnTime world + secondsPassedSinceLastFrame)}
 
     --TODO: rename document or organize this stuff in different .hs
     --TODO: adicionar zero a esquerda quando tiver um só algarismo
@@ -20,7 +24,7 @@ module Interface.Time (updateTime, drawInterfaces) where
             drawPlayerPos (xTile, yTile),--delete afterwards
             drawItemQuantity (inventory world), -- delete afterwards
             drawFriendStatus world, --delete?
-            drawTimer  (timer world)
+            drawTimer  (itemSpawnTime world)
         ]
 
     drawTimer :: Float -> Picture

@@ -1,5 +1,5 @@
 module Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, 
-backgroundColor, jpgImagesStart) where
+backgroundColor, jpgImagesStart, playerSize) where
 
 
     import Graphics.Gloss.Data.ViewPort
@@ -31,3 +31,6 @@ backgroundColor, jpgImagesStart) where
     --this is usefull
     zoomedViewPort :: ViewPort
     zoomedViewPort = ViewPort { viewPortTranslate = (0, 0), viewPortRotate = 0, viewPortScale = 1.2 } 
+
+    playerSize :: Float 
+    playerSize = 16

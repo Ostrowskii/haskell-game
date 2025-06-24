@@ -1,80 +1,98 @@
-    {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-    {-# HLINT ignore "Use head" #-}
-    module Map.ItemLoader (drawItems, hideItemIfOnTop, pickUpItemIfOnTop, createRandomItems, spawnRandomItem, maybeSpawnNewItem) where
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use head" #-}
+module Map.ItemLoader (drawItems, hideItemIfOnTop, pickUpItemIfOnTop, createRandomInitialItems, spawnItemSometimes) where
 
     import Graphics.Gloss
-    import System.Random (StdGen, split, mkStdGen, randomRIO, RandomGen, randomRs, randomR)
-    import Control.Monad (replicateM)
+    import Types (GameItem(..), WorldData (..), Position)
+    import System.Random (randomRIO, StdGen, randomR, split)
 
-    import Types (GameItem(..), WorldData(..), Position)
-    import Map.Map (tileToWorldPosition, worldToTilePosition, tilesThatItensCanSpawn)
+    import Map.Map (tileToWorldPosition, worldToTilePosition, spawnPositions)
+    import Globals (playerSize)
+    import Debug.Trace (trace)
 
-    spawnPositions :: [Position]
-    spawnPositions = map tileToWorldPosition tilesThatItensCanSpawn
-
-    createRandomItems :: [Picture] -> [Position] -> StdGen -> Int -> ([GameItem], StdGen)
-    createRandomItems itemImages occupiedPositions gen n =
-        let
-            availablePositions = filter (`notElem` occupiedPositions) spawnPositions
-            shuffledPositions = shuffle availablePositions gen
-            chosenPositions = take n shuffledPositions
-            (gen1, gen2) = split gen
-            itemTypes = take n $ randomRs (0, length itemImages - 1) gen1
-            items = [ GameItem pos itemType (itemImages !! itemType) True
-                    | (pos, itemType) <- zip chosenPositions itemTypes ]
-        in (items, gen2)
-
-
-
-
-    spawnRandomItem :: RandomGen g => [Picture] -> [GameItem] -> g -> (Maybe GameItem, g)
-    spawnRandomItem itemImages currentItems gen =
-        let
-            takenPositions = [pos | GameItem pos _ _ True <- currentItems]
-            availablePositions = filter (`notElem` takenPositions) spawnPositions
-        in case availablePositions of
-            [] -> (Nothing, gen) -- não tem lugar para spawnar
-            (pos:_) -> 
-                -- gera índice aleatório para escolher posição e tipo
-                let (posIdx, gen1) = randomR (0, length availablePositions - 1) gen
-                    posChosen = availablePositions !! posIdx
-                    (typeIdx, gen2) = randomR (0, length itemImages - 1) gen1
-                    newItem = GameItem posChosen typeIdx (itemImages !! typeIdx) True
-                in (Just newItem, gen2)
-
-        
-    takeRandomUniquePure :: RandomGen g => Int -> [a] -> g -> ([a], g)
-    takeRandomUniquePure n xs gen =
-        let shuffled = shuffle xs gen
-        in (take n shuffled, gen)
-
-    shuffle :: RandomGen g => [a] -> g -> [a]
-    shuffle xs gen = map snd . take (length xs) . zip (randomRs (0 :: Int, maxBound) gen) $ xs
 
 
     drawItems :: [GameItem] -> Picture
-    drawItems itemsGame = pictures [translate x y pic | GameItem (x, y) _ pic True <- itemsGame]
+    drawItems    itemsGame = pictures [translate x y pic | GameItem (x, y) _ pic True <- itemsGame]
 
-    maybeSpawnNewItem :: Float -> [Picture] -> WorldData -> WorldData
-    maybeSpawnNewItem dt itemImages world =
-        let newTimer = timer world + dt
-        in if newTimer >= 5
-            then case spawnNewItem itemImages (worldItems world) of
-                    Just newItems -> world { worldItems = newItems, timer = 0 }
-                    Nothing -> world { timer = 0 }
-            else world { timer = newTimer }
 
-    spawnNewItem :: [Picture] -> [GameItem] -> Maybe [GameItem]
-    spawnNewItem itemImages existingItems =
+    createRandomInitialItems :: [Picture] -> IO GameItem
+    createRandomInitialItems itemImages = do
+        let availablePositions = spawnPositions
+            maxIndex = length availablePositions - 1
+            maxTypeIndex = length itemImages - 1
+
+        posIndex <- randomRIO (0, maxIndex)
+        typeIndex <- randomRIO (1, 3)  
+        let pos = availablePositions !! posIndex
+            pic = itemImages !! typeIndex
+
+        return $ GameItem pos typeIndex pic True
+
+    spawnItemSometimes :: [Picture] -> WorldData -> WorldData
+    spawnItemSometimes itemImages world
+            | itemSpawnTime world >= 5 =
+                let
+                    availablePositions = filter (`canSpawnAt` worldItems world) spawnPositions
+                in
+                    if null availablePositions
+                    then world { itemSpawnTime = 0 }  -- sem espaço, apenas zera o tempo
+                    else
+                        let (newRng, newItem) = spawnItem (rng world) (worldItems world) itemImages
+                        in world
+                            { worldItems = newItem : worldItems world
+                            , itemSpawnTime = 0
+                            , rng = newRng
+                            }
+            | otherwise = world
+
+
+    spawnItem :: StdGen -> [GameItem] -> [Picture] -> (StdGen, GameItem)
+    spawnItem gen items itemImages =
         let
-            usedPositions = map (\(GameItem pos _ _ _) -> pos) existingItems
-            availablePositions = filter (`notElem` usedPositions) spawnPositions
-        in case availablePositions of
-            [] -> Nothing
-            (pos:_) ->
-                let itemType = 0  -- ou qualquer lógica determinística, tipo com seed
-                    item = GameItem pos itemType (itemImages !! itemType) True
-                in Just (item : existingItems)
+            (genPos, genType) = split gen
+            availablePositions = filter (`canSpawnAt` items) spawnPositions
+            (posIndex, genPos') = randomR (0, length availablePositions - 1) genPos
+            spawnPosWorld = availablePositions !! posIndex
+
+            (itemType, genType') = randomR (1, length itemImages - 1) genType
+            itemPic = itemImages !! itemType
+
+            newItem = GameItem
+                { itemPosition = spawnPosWorld
+                , itemType = itemType
+                , itemImage = itemPic
+                , itemVisible = True
+                }
+
+        in (genType', newItem)
+
+
+
+
+    createRandomItemAvoidingDuplicates :: [Picture] -> [GameItem] -> IO GameItem
+    createRandomItemAvoidingDuplicates itemImages existingItems = do
+            let positions = spawnPositions
+                maxTypeIndex = length itemImages - 1
+
+            trySpawn positions
+        where
+            trySpawn [] = error "No available positions!"
+            trySpawn ps = do
+                index <- randomRIO (0, length ps - 1)
+                let pos = ps !! index
+                if canSpawnAt pos existingItems
+                then do
+                    itemType <- randomRIO (1, 3)
+                    let pic = itemImages !! itemType
+                    return $ GameItem pos itemType pic True
+                else trySpawn ps
+
+
+    canSpawnAt :: Position -> [GameItem] -> Bool
+    canSpawnAt pos items = not $ any (\item -> itemVisible item && itemPosition item == pos) items
+
+
 
     --get the item
     pickUpItemIfOnTop :: WorldData -> WorldData
@@ -86,14 +104,14 @@
         in world { worldItems = updatedItems, inventory = pickedUpInventory }
 
     --TODO: make player box collider smaller
-    hideItemIfOnTop :: Position -> Int -> [GameItem] -> ([GameItem], Maybe Int)
-    hideItemIfOnTop playerPosition currentInventory items =
+    hideItemIfOnTop ::  Position ->     Int ->              [GameItem] -> ([GameItem], Maybe Int)
+    hideItemIfOnTop     playerPosition  currentInventory    items =
         let
             (x, y) = playerPosition
             playerTilePos  = worldToTilePosition (x, y)
-            playerTilePosB = worldToTilePosition (x, y - 32)
-            playerTilePosR = worldToTilePosition (x + 32, y)
-            playerTilePosRB = worldToTilePosition (x + 32, y - 32)
+            playerTilePosB = worldToTilePosition (x, y - playerSize )
+            playerTilePosR = worldToTilePosition (x + playerSize, y)
+            playerTilePosRB = worldToTilePosition (x + playerSize, y - playerSize)
 
             isTouchingItem tilePos =
                 tilePos == playerTilePos  ||

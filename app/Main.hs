@@ -20,6 +20,7 @@ module Main where
 
   main :: IO ()
   main = do
+    let seed = 42
     itemImages <- loadImages
       [ 
          "src/img/food1.png"
@@ -39,4 +40,4 @@ module Main where
 
       ]
 
-    startGame itemImages (otherImagesPng ++ otherImagesJpg)
+    startGame seed itemImages (otherImagesPng ++ otherImagesJpg)
