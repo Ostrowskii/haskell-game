@@ -1,6 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use head" #-}
-module Map.ItemLoader (drawItems, hideItemIfOnTop, pickUpItemIfOnTop, createRandomInitialItems, spawnItemSometimes) where
+module Map.ItemLoader (drawItems, generateInitialItems, spawnItem, hideItemIfOnTop, pickUpItemIfOnTop, createRandomInitialItems, spawnItemSometimes) where
 
     import Graphics.Gloss
     import Types (GameItem(..), WorldData (..), Position)
@@ -127,4 +127,10 @@ module Map.ItemLoader (drawItems, hideItemIfOnTop, pickUpItemIfOnTop, createRand
 
         in foldr processItem ([], Nothing) items
 
+    generateInitialItems :: Int -> StdGen -> [Picture] -> ([GameItem], StdGen)
+    generateInitialItems 0 gen _ = ([], gen)
+    generateInitialItems n gen images =
+        let (gen', item) = spawnItem gen [] images
+            (rest, finalGen) = generateInitialItems (n - 1) gen' images
+        in (item : rest, finalGen)
 

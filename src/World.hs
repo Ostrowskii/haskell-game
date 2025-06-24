@@ -17,7 +17,7 @@ module World (startGame) where
     import Player.Player (drawPlayer)
     import Player.Inventory (giveItemToFriend, drawItemOnHead, handleResetInventory)
     import Map.Map (drawMap, tileToWorldPosition, worldToTilePosition)
-    import Map.ItemLoader(drawItems, hideItemIfOnTop, pickUpItemIfOnTop, createRandomInitialItems, spawnItemSometimes)
+    import Map.ItemLoader(drawItems, generateInitialItems, hideItemIfOnTop, pickUpItemIfOnTop, createRandomInitialItems, spawnItemSometimes, spawnItem)
     import Map.Block.Decoration(drawSickFriend)
     import Globals (windowWidthInPixels, windowHeightInPixels, windowPositionTop, windowPositionLeft, fps, backgroundColor)
     import Interface.Time (updateTime, drawInterfaces)
@@ -28,16 +28,13 @@ module World (startGame) where
 
         pictures
         [
-            drawMap,
+            drawMap otherImages,
             drawInterfaces world,
             drawItems  (worldItems world),
             drawSickFriend (otherImages !! 0) (otherImages !! 5), -- 0 = sick friend image
             drawPlayer (playerPosition world) [(otherImages !! 1), (otherImages !! 2), (otherImages !! 3), (otherImages !! 4)] (playerLastDirection world),
             drawItemOnHead  (playerPosition world) (inventory world) itemsImages
         ]
-
-    -- handleInput :: Event -> WorldData -> WorldData
-    -- handleInput = handleInputMoviment
 
 
     handleInput :: Event -> WorldData -> WorldData
@@ -76,11 +73,10 @@ module World (startGame) where
 
     startGame :: Int -> [Picture] -> [Picture] -> IO ()
     startGame  seed itemsImages otherImages = do
-        items <- replicateM 5 (createRandomInitialItems itemsImages)
-
+        -- items <- replicateM 5 (createRandomInitialItems itemsImages)
         let gen = mkStdGen seed
-            initial = initialState  gen items
-
+            (items, newGen) = generateInitialItems 5 gen itemsImages
+            initial = initialState newGen items
         play
             (InWindow "Also try Terraria!"
                 (windowWidthInPixels, windowHeightInPixels)

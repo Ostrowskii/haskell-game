@@ -29,15 +29,27 @@ module Main where
         , "src/img/food3.png"
       ]
     otherImagesPng <- loadImages 
-      [   "src/img/sickfriendlonghair.png"
+      [   "src/img/sickfriendlonghair.png"--0
         , "src/img/characterUp.png"
         , "src/img/characterRight.png"
         , "src/img/characterDown.png"
         , "src/img/characterLeft.png"
+        -- , "src/img/walldown.png"
+        , "src/img/wallLeft.png"--5
+        , "src/img/wallLB.png"
+        , "src/img/wallB.png"
+        , "src/img/wallRB.png"
+        , "src/img/wallRight.png"
+        , "src/img/wallup.png" --10
+        , "src/img/floor.png"
+        , "src/img/wallSeparateRL.png"
+        , "src/img/wallendSeparateRL.png"
+        , "src/img/divisionend.png" 
+        , "src/img/splitLRU.png" --15
       ]
     otherImagesJpg <- loadJPGs
       [ "src/img/rugone.jpg"
-
+        -- ,"src/img/wallup.jpg"
       ]
 
     startGame seed itemImages (otherImagesPng ++ otherImagesJpg)

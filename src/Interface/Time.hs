@@ -13,6 +13,7 @@ module Interface.Time (updateTime, drawInterfaces) where
         world {timer = (timer world) + secondsPassedSinceLastFrame, 
                 itemSpawnTime = (itemSpawnTime world + secondsPassedSinceLastFrame)}
 
+
     --TODO: rename document or organize this stuff in different .hs
     --TODO: adicionar zero a esquerda quando tiver um só algarismo
     drawInterfaces ::  WorldData ->Picture
@@ -24,8 +25,9 @@ module Interface.Time (updateTime, drawInterfaces) where
             drawPlayerPos (xTile, yTile),--delete afterwards
             drawItemQuantity (inventory world), -- delete afterwards
             drawFriendStatus world, --delete?
-            drawTimer  (itemSpawnTime world)
+            drawTimer  (timer world)
         ]
+
 
     drawTimer :: Float -> Picture
     drawTimer timer =

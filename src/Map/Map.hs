@@ -5,7 +5,7 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions, tiles
 
     import Globals (playerSize)
     import Graphics.Gloss
-    import Map.Block.Blocks (idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt, blueBlockAt, redBlockAt, invisibleBlockAt)
+    import Map.Block.Blocks (idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt, blueBlockAt, redBlockAt, invisibleBlockAt, imageAt, wallImageAt)
 
     tileSizeInPixel :: Int
     tileSizeInPixel = 32
@@ -18,46 +18,61 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions, tiles
     level :: TileMap
     level =
 
-        [ replicate 28 1
-        , [1] ++ replicate 8 4 ++ [1, 6, 5, 5] ++ replicate 5 7 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1, 6, 5, 5] ++ replicate 5 7 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1, 5, 5, 5] ++ replicate 5 7 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1, 5, 5, 5] ++ replicate 5 7 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 7 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 7 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 7 ++ [1] ++ replicate 8 4 ++ [1]
-        ,  replicate 4 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 4 1
-        , [1] ++ replicate 26 4 ++ [1]
-        , [1] ++ replicate 26 4 ++ [1]
-        ,  replicate 4 1 ++ [4,4] ++ replicate 7 1 ++ [1,4] ++ replicate 7 1 ++ [4,4] ++ replicate 4 1
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
-        , replicate 28 1
+        [  
+          [11] ++ replicate 8 16 ++ [17]         ++ replicate 8 16++ [17] ++ replicate 8 16 ++ [15]
+        , [11] ++ replicate 8 4 ++ [17, 6, 5, 5] ++ replicate 5 7 ++ [17] ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++ [17, 6, 5, 5] ++ replicate 5 7 ++ [17] ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++ [17, 5, 5, 5] ++ replicate 5 7 ++ [17] ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++ [17, 5, 5, 5] ++ replicate 5 7 ++ [17] ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++ [17]          ++ replicate 8 7 ++ [17] ++ replicate 8 4 ++          [15]
+        , [11] ++ replicate 8 4 ++ [17]          ++ replicate 8 7 ++ [17] ++ replicate 8 4 ++          [15]
+        , [11] ++ replicate 8 4 ++ [18]          ++ replicate 8 7 ++ [18] ++ replicate 8 4 ++          [15]
+        , [11] ++ replicate 3 16 ++ [4,4] ++ replicate 3 16 ++  [16]  ++ replicate 3 16 ++ [4,4] ++ replicate 3 16 ++  [16]  ++ replicate 3 16 ++ [4,4] ++ replicate 3 16 ++ [15]
+        , [11] ++ replicate 26 4 ++ [15]
+        , [11] ++ replicate 26 4 ++ [15]
+        , [11] ++ replicate 3 16 ++ [4,4] ++ replicate 3 16 ++  [19]  ++ replicate 3 16 ++ [4,4] ++ replicate 3 16 ++  [19]  ++ replicate 3 16 ++ [4,4] ++ replicate 3 16 ++ [15]
+        , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
+        , [12 ] ++ replicate 26 13 ++ [14]
         ]
     
 
-    tileToBlock ::  Int     -> (Float, Float)  -> Picture
-    tileToBlock     1       = redBlockAt
-    tileToBlock     2       = blueBlockAt
-    tileToBlock     3       = invisibleBlockAt
-    tileToBlock     4       = slightlyLighterBlueBlockAt --itens can spawn
-    tileToBlock     5       = lightBlueBlockAt
-    tileToBlock     6       = lightBlueBlockAt --with colision
-    tileToBlock     7       = slightlyLighterBlueBlockAt
-    tileToBlock     _       = \_ -> blank
+    tileToBlock :: Int ->   [Picture]   -> (Float, Float) -> Picture
+    tileToBlock     1       otherImages = redBlockAt
+    tileToBlock     2       otherImages = blueBlockAt
+    tileToBlock     3       otherImages = invisibleBlockAt
+    -- tileToBlock     4       otherImages = slightlyLighterBlueBlockAt --itens can spawn
+    tileToBlock     5       otherImages = lightBlueBlockAt
+    tileToBlock     6       otherImages = lightBlueBlockAt --with colision
+
+
+    tileToBlock     4       otherImages = imageAt (otherImages !! 11) -- floor
+    tileToBlock     7       otherImages = imageAt (otherImages !! 11)
+
+    tileToBlock     11      otherImages = imageAt (otherImages !! 5) -- L
+    tileToBlock     12      otherImages = imageAt (otherImages !! 6) -- LB
+    tileToBlock     13      otherImages = imageAt (otherImages !! 7) -- B
+    tileToBlock     14      otherImages = imageAt (otherImages !! 8) -- BR
+    tileToBlock     15      otherImages = imageAt (otherImages !! 9) -- R
+    tileToBlock     16      otherImages = imageAt (otherImages !! 10) -- up
+    tileToBlock     17      otherImages = imageAt (otherImages !! 12) -- separate
+    tileToBlock     18      otherImages = imageAt (otherImages !! 14) -- separate
+    tileToBlock     19      otherImages = imageAt (otherImages !! 15) -- separate LRU
+
+    tileToBlock     _       otherImages = \_ -> blank
 
     quantityLevelCol, quantityLevelRow :: Int 
     quantityLevelCol = length (head level)
     quantityLevelRow = length level
 
-    drawMap :: Picture
-    drawMap = pictures
-            [ tileToBlock tile (x, y)
+    drawMap :: [Picture] -> Picture
+    drawMap     otherImages  = pictures
+            [ tileToBlock  tile otherImages (x, y) 
             | (rowIndex, row) <- zip [0 ..] level
             , (colIndex, tile) <- zip [0 ..] row
             , let x = fromIntegral (colIndex * tileSizeInPixel) - xMapCenteringValue
