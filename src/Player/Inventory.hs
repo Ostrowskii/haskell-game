@@ -13,11 +13,12 @@
     drawItemOnHead    playerPosition idImage allImages =
         let
             (x,y) = playerPosition
-            y2 = y+40
+            y2 = y+48
+            x2 = x -4
             itemImage = allImages !! idImage
 
         in
-        pictures [translate x y2 itemImage]
+        pictures [translate x2 y2 itemImage]
 
 
     giveItemToFriend :: WorldData -> WorldData
@@ -30,8 +31,6 @@
                     happy = friendHappinessPercent world
                     health = friendHealthPercent world
                     (addingHappiness, addingHealth) = itemsValuesAtId myInventory
-                    -- (totalHappiness, totalHealth) = (happy + addingHappiness, health + addingHealth)
-                    -- (totalHappiness, totalHealth) = if myInventory == 2 then (happy + 20, health + 5) else (happy, health)
                 in world { inventory = 0, friendHappinessPercent = happy + addingHappiness, friendHealthPercent = health + addingHealth }
             else world
 

@@ -33,4 +33,4 @@ backgroundColor, jpgImagesStart, playerSize) where
     zoomedViewPort = ViewPort { viewPortTranslate = (0, 0), viewPortRotate = 0, viewPortScale = 1.2 } 
 
     playerSize :: Float 
-    playerSize = 16
+    playerSize = 24

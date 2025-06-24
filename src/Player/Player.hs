@@ -9,9 +9,10 @@ module Player.Player (drawPlayer) where
     drawPlayer (x,y) pixelarts direction = 
         let sprite = whichSprite direction pixelarts
            
-            y2 = y +16
+            y2 = y +24
+            x2 = x -4
 
-        in translate x y2 sprite
+        in translate x2 y2 sprite
 
 
     whichSprite :: Direction -> [Picture] -> Picture

@@ -3,6 +3,7 @@
 module Map.Map (drawMap, pixelPositionToBlockId, isBlockSolidAt, 
 tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions, tilesThatItensCanSpawn) where
 
+    import Globals (playerSize)
     import Graphics.Gloss
     import Map.Block.Blocks (idBlocksWithColition, lightBlueBlockAt, slightlyLighterBlueBlockAt, blueBlockAt, redBlockAt, invisibleBlockAt)
 
@@ -28,7 +29,7 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions, tiles
         ,  replicate 4 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 4 1
         , [1] ++ replicate 26 4 ++ [1]
         , [1] ++ replicate 26 4 ++ [1]
-        ,  replicate 4 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 7 1 ++ [4,4] ++ replicate 4 1
+        ,  replicate 4 1 ++ [4,4] ++ replicate 7 1 ++ [1,4] ++ replicate 7 1 ++ [4,4] ++ replicate 4 1
         , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
         , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
         , [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1] ++ replicate 8 4 ++ [1]
@@ -63,8 +64,9 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions, tiles
             , let y = fromIntegral (-(rowIndex * tileSizeInPixel)) + yMapCenteringValue
             ]
 
-    -- can i spawn an item??
 
+
+    -- can i spawn an item??
     tilesThatItensCanSpawn :: [(Int, Int)]
     tilesThatItensCanSpawn =
         [ (rowIdx, colIdx)
@@ -83,9 +85,9 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions, tiles
     isBlockSolidAt ::   (Float, Float)          -> Bool
     isBlockSolidAt      (x,y) =
         let         idBlock = pixelPositionToBlockId (x, y)
-                    idBlock2 = pixelPositionToBlockId (x + fromIntegral tileSizeInPixel, y)
-                    idBlock3 = pixelPositionToBlockId (x, y - fromIntegral tileSizeInPixel)
-                    idBlock4 = pixelPositionToBlockId (x +  fromIntegral tileSizeInPixel, y -  fromIntegral tileSizeInPixel)
+                    idBlock2 = pixelPositionToBlockId (x + playerSize, y)
+                    idBlock3 = pixelPositionToBlockId (x, y -  playerSize)
+                    idBlock4 = pixelPositionToBlockId (x +  playerSize, y -  playerSize)
 
         in          idBlock `elem` idBlocksWithColition 
                 || idBlock2 `elem` idBlocksWithColition 
