@@ -19,7 +19,7 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions, tiles
     level =
 
         [  
-          [11] ++ replicate 8 16 ++ [17]         ++ replicate 8 16++ [17] ++ replicate 8 16 ++ [15]
+          [11] ++ replicate 8 16 ++ [19]         ++ replicate 8 16++ [19] ++ replicate 8 16 ++ [15]
         , [11] ++ replicate 8 4 ++ [17, 6, 5, 5] ++ replicate 5 7 ++ [17] ++ replicate 8 4 ++ [15]
         , [11] ++ replicate 8 4 ++ [17, 6, 5, 5] ++ replicate 5 7 ++ [17] ++ replicate 8 4 ++ [15]
         , [11] ++ replicate 8 4 ++ [17, 5, 5, 5] ++ replicate 5 7 ++ [17] ++ replicate 8 4 ++ [15]
@@ -37,7 +37,7 @@ tileToWorldPosition, tileSizeInPixel, worldToTilePosition, spawnPositions, tiles
         , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
         , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
         , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
-        , [11] ++ replicate 8 4 ++                              [17] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
+        , [11] ++ replicate 8 4 ++                              [18] ++ replicate 8 4 ++ [17]                              ++ replicate 8 4 ++ [15]
         , [12 ] ++ replicate 26 13 ++ [14]
         ]
     

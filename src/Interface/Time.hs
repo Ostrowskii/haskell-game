@@ -22,8 +22,8 @@ module Interface.Time (updateTime, drawInterfaces) where
             (x, y) = playerPosition world
             (xTile, yTile) = worldToTilePosition (x,y)
         in pictures [
-            drawPlayerPos (xTile, yTile),--delete afterwards
-            drawItemQuantity (inventory world), -- delete afterwards
+            -- drawPlayerPos (xTile, yTile),--delete afterwards
+            -- drawItemQuantity (inventory world), -- delete afterwards
             drawFriendStatus world, --delete?
             drawTimer  (timer world)
         ]
@@ -90,7 +90,7 @@ module Interface.Time (updateTime, drawInterfaces) where
             happy = friendHappinessPercent world
 
             info = "health: " ++ printf "%.0f" health ++ "/100" ++
-                "   happyness: " ++ printf "%.0f" happy ++ "/100"
+                "   happiness: " ++ printf "%.0f" happy ++ "/100"
         in Translate x y $ Scale sx sy $ Text info
         where
             x = -400
