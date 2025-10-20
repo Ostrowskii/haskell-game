@@ -38,6 +38,9 @@
     itemsValuesAtId     1 = (10,10)
     itemsValuesAtId     2 = (20,20)
     itemsValuesAtId     3 = (30,30)
+    itemsValuesAtId     4 = (40,-20) --hamburguer
+    itemsValuesAtId     5 = (30,-10) --pizza
+    itemsValuesAtId     6 = (20,-10) --milshake
 
 
 

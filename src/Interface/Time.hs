@@ -35,7 +35,8 @@ module Interface.Time (updateTime, drawInterfaces) where
             remainderAfterHours = (round timer) `mod` (60*60)
             minutes = remainderAfterHours `div` 60
             seconds = remainderAfterHours `mod` 60
-            info = "Timer: " ++ show hours ++ ":" ++ show minutes ++ ":" ++ show seconds
+            format n = if n<10 then  '0' : show n else show n
+            info = "Timer: " ++ format hours ++ ":" ++ format minutes ++ ":" ++ format seconds
         in Translate x y $ Scale sx sy $ Text info
         where
         x = -400

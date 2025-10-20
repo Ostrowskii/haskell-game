@@ -6,7 +6,7 @@ module Main where
   import Graphics.Gloss
   import Graphics.Gloss.Juicy (loadJuicyPNG, loadJuicyJPG)
 
-
+  -- codigo 
   loadImages :: [FilePath] -> IO [Picture]
   loadImages paths = do 
     maybePics <- mapM loadJuicyPNG paths 
@@ -23,10 +23,13 @@ module Main where
     let seed = 42
     itemImages <- loadImages
       [ 
-         "src/img/food1.png"
-        ,"src/img/food1.png"
-        ,"src/img/yogurt.png"
-        , "src/img/food3.png"
+         "src/img/f1yogurt.png"
+        ,"src/img/f1yogurt.png"
+        ,"src/img/f2yogurt.png"
+        , "src/img/f3yogurt.png"
+        , "src/img/f4hamburgues.png"
+        , "src/img/f5pizza.png"
+        , "src/img/f6strawberrymilkshake.png"
       ]
     otherImagesPng <- loadImages 
       [   "src/img/sickfriendlonghair.png"--0
